@@ -1,7 +1,7 @@
 {
-  "name": "우리 둘 V2",
+  "name": "우리 둘 V4",
   "short_name": "우리 둘",
-  "description": "부부 전용 공유 앱",
+  "description": "로그인 없이 사용하는 부부 전용 공유 앱",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
