@@ -46,14 +46,14 @@
       <article class="welcome-card">
         <span>오늘도 함께</span>
         <strong id="welcomeName"></strong>
-        <p>장보기, 여행, 일정과 메모를 둘이서 공유하세요.</p>
+        <p>장보기, 여행, 가계부와 생활 기록을 둘이서 공유하세요.</p>
       </article>
 
       <div class="stats-grid">
         <article><small>살 물건</small><b id="shoppingCount">0</b></article>
         <article><small>예정 여행</small><b id="tripCount">0</b></article>
         <article><small>남은 할 일</small><b id="todoCount">0</b></article>
-        <article><small>이번 달 기록</small><b id="monthCount">0</b></article>
+        <article><small>이번 달 지출</small><b id="homeExpenseTotal">0원</b></article>
       </div>
 
       <section class="section-block">
@@ -109,24 +109,44 @@
       <div id="tripList" class="list"></div>
     </section>
 
-    <section id="recordsView" class="view">
-      <article class="panel">
-        <div class="grid">
-          <select id="recordCategory">
-            <option>할 일</option><option>메모</option><option>일정</option><option>가계부</option>
-          </select>
-          <select id="recordWriter"></select>
-        </div>
-        <textarea id="recordContent" rows="3" placeholder="기록할 내용을 입력하세요"></textarea>
-        <div id="recordExtra" class="grid" hidden>
-          <input id="recordDate" type="date">
-          <input id="recordAmount" type="number" min="0" step="100" placeholder="금액">
-        </div>
-        <button id="addRecord" class="primary-button">기록 추가</button>
+    <section id="moneyView" class="view">
+      <article class="money-summary-card">
+        <span>이번 달 지출</span>
+        <strong id="monthExpenseTotal">0원</strong>
+        <small id="monthExpenseCount">0건</small>
       </article>
 
-      <h2>최근 기록</h2>
-      <div id="recordList" class="list"></div>
+      <article class="panel quick-money-panel">
+        <h2>지출 입력</h2>
+        <div class="amount-input-wrap">
+          <input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0">
+          <span>원</span>
+        </div>
+        <input id="moneyContent" placeholder="사용한 곳 또는 내용">
+        <div class="grid">
+          <select id="moneyCategory">
+            <option>식비</option>
+            <option>생활용품</option>
+            <option>교통</option>
+            <option>쇼핑</option>
+            <option>주거</option>
+            <option>여행</option>
+            <option>의료</option>
+            <option>기타</option>
+          </select>
+          <select id="moneyWriter"></select>
+        </div>
+        <input id="moneyDate" type="date">
+        <button id="addMoney" class="primary-button">지출 저장</button>
+      </article>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <h2>이번 달 내역</h2>
+          <button id="openQuickMoney" class="text-button">빠른 입력</button>
+        </div>
+        <div id="moneyList" class="list"></div>
+      </section>
     </section>
 
     <section id="settingsView" class="view">
@@ -148,7 +168,7 @@
       <button class="nav-button active" data-view="home"><span>⌂</span><small>홈</small></button>
       <button class="nav-button" data-view="shopping"><span>☑</span><small>장보기</small></button>
       <button class="nav-button" data-view="travel"><span>✈</span><small>여행</small></button>
-      <button class="nav-button" data-view="records"><span>＋</span><small>기록</small></button>
+      <button class="nav-button" data-view="money"><span>₩</span><small>가계부</small></button>
       <button class="nav-button" data-view="settings"><span>⚙</span><small>설정</small></button>
     </nav>
   </main>

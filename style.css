@@ -35,3 +35,9 @@ label{display:grid;gap:6px;margin:12px 0;color:#6f6264;font-size:14px;font-weigh
 .nav-button{display:grid;gap:3px;justify-items:center;border:0;background:transparent;color:#9a8e90;font-size:20px}.nav-button small{font-size:11px}.nav-button.active{color:#94606a;font-weight:800}
 .toast{position:fixed;z-index:20;left:50%;bottom:96px;max-width:calc(100% - 34px);padding:12px 16px;border-radius:13px;background:#332c2d;color:#fff;transform:translateX(-50%)}
 @media(max-width:420px){.grid{grid-template-columns:1fr}}
+
+.money-summary-card{margin-bottom:14px;padding:22px;border-radius:24px;background:linear-gradient(135deg,#85636b,#60474e);color:#fff;box-shadow:0 12px 32px rgba(84,55,63,.18)}
+.money-summary-card span{display:block;font-size:12px;opacity:.8}.money-summary-card strong{display:block;margin:6px 0 3px;font-size:34px}.money-summary-card small{opacity:.8}
+.quick-money-panel h2{margin-top:0}.amount-input-wrap{position:relative}.amount-input-wrap input{padding-right:48px;font-size:28px;font-weight:800;text-align:right}.amount-input-wrap span{position:absolute;right:15px;top:13px;color:#8d7f82;font-weight:700}
+.money-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:15px;border:1px solid #eee1e3;border-radius:17px;background:#fff}.money-row strong{display:block}.money-row .amount{font-weight:800;color:#7d4f58}.money-row .meta{margin-top:5px}
+.quick-money-focus{animation:quickPulse .55s ease}@keyframes quickPulse{0%{box-shadow:0 0 0 0 rgba(148,96,106,.28)}100%{box-shadow:0 0 0 16px rgba(148,96,106,0)}}
