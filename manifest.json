@@ -1,12 +1,12 @@
 {
-  "name": "우리 둘",
+  "name": "우리 둘 V2",
   "short_name": "우리 둘",
-  "description": "부부가 함께 사용하는 공유 앱",
+  "description": "부부 전용 공유 앱",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fffafa",
-  "theme_color": "#fff7f7",
+  "background_color": "#fbf8f8",
+  "theme_color": "#fbf7f7",
   "icons": [
     {
       "src": "./assets/icon-192.png",

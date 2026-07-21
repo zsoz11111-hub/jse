@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fff7f7">
+  <meta name="theme-color" content="#fbf7f7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="우리 둘">
-  <title>우리 둘</title>
+  <title>우리 둘 V2</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
   <link rel="stylesheet" href="./style.css">
@@ -17,88 +17,174 @@
 
   <section id="authScreen" class="auth-screen">
     <div class="auth-card">
-      <div class="heart-mark">♥</div>
+      <div class="brand-mark">♥</div>
+      <p class="eyebrow">PRIVATE COUPLE APP</p>
       <h1>우리 둘</h1>
-      <p>둘만의 일정과 기록을 한곳에 모아보세요.</p>
+      <p class="auth-description">일정, 할 일, 가계부, 추억을 둘만의 공간에 기록하세요.</p>
 
-      <label>
-        이메일
+      <label>이메일
         <input id="emailInput" type="email" autocomplete="email" placeholder="example@email.com">
       </label>
-      <label>
-        비밀번호
+      <label>비밀번호
         <input id="passwordInput" type="password" autocomplete="current-password" minlength="6" placeholder="6자 이상">
       </label>
 
       <button id="loginButton" class="primary-button">로그인</button>
       <button id="signupButton" class="secondary-button">처음 계정 만들기</button>
-      <p class="small-note">두 분이 각각 한 번씩 계정을 만든 뒤, Supabase에서 신규 가입을 꺼두면 더 안전합니다.</p>
+      <p class="small-note">두 분이 각각 계정을 만든 뒤 Supabase에서 신규 가입을 꺼두세요.</p>
     </div>
   </section>
 
-  <main id="appScreen" class="app" hidden>
+  <main id="appScreen" class="app-shell" hidden>
     <header class="topbar">
       <div>
         <p id="todayText" class="eyebrow"></p>
-        <h1>우리 둘</h1>
+        <h1 id="pageTitle">홈</h1>
       </div>
       <button id="logoutButton" class="icon-button" aria-label="로그아웃">↗</button>
     </header>
 
-    <section class="summary-card">
-      <div>
-        <span>남은 할 일</span>
-        <strong id="pendingCount">0</strong>
-      </div>
-      <div>
-        <span>이번 달 기록</span>
-        <strong id="monthCount">0</strong>
-      </div>
+    <section id="homeView" class="view active">
+      <article class="hero-card">
+        <div>
+          <span class="hero-label">함께한 기록</span>
+          <strong id="daysTogether">0일</strong>
+          <p id="anniversaryText">기념일을 설정해주세요.</p>
+        </div>
+        <button id="editAnniversaryButton" class="soft-button">기념일 설정</button>
+      </article>
+
+      <section class="stats-grid">
+        <article class="stat-card"><span>남은 할 일</span><strong id="pendingCount">0</strong></article>
+        <article class="stat-card"><span>이번 달 기록</span><strong id="monthCount">0</strong></article>
+        <article class="stat-card"><span>이번 달 지출</span><strong id="monthExpense">0원</strong></article>
+        <article class="stat-card"><span>다가오는 일정</span><strong id="upcomingCount">0</strong></article>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <h2>다가오는 일정</h2>
+          <button class="text-button" data-go="calendar">전체 보기</button>
+        </div>
+        <div id="upcomingList" class="mini-list"></div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <h2>최근 기록</h2>
+          <button class="text-button" data-go="records">전체 보기</button>
+        </div>
+        <div id="recentList" class="mini-list"></div>
+      </section>
     </section>
 
-    <nav id="categoryNav" class="category-nav">
-      <button class="category-button active" data-category="전체">전체</button>
-      <button class="category-button" data-category="할 일">할 일</button>
-      <button class="category-button" data-category="장보기">장보기</button>
-      <button class="category-button" data-category="일정">일정</button>
-      <button class="category-button" data-category="가계부">가계부</button>
-      <button class="category-button" data-category="메모">메모</button>
+    <section id="recordsView" class="view">
+      <div class="chip-row" id="categoryNav">
+        <button class="chip active" data-category="전체">전체</button>
+        <button class="chip" data-category="할 일">할 일</button>
+        <button class="chip" data-category="장보기">장보기</button>
+        <button class="chip" data-category="일정">일정</button>
+        <button class="chip" data-category="가계부">가계부</button>
+        <button class="chip" data-category="메모">메모</button>
+      </div>
+
+      <article class="composer-card">
+        <div class="composer-grid">
+          <select id="categoryInput">
+            <option>할 일</option>
+            <option>장보기</option>
+            <option>일정</option>
+            <option>가계부</option>
+            <option>메모</option>
+          </select>
+          <select id="writerInput">
+            <option>진성</option>
+            <option>성은</option>
+          </select>
+        </div>
+        <textarea id="contentInput" rows="3" maxlength="200" placeholder="내용을 입력하세요"></textarea>
+        <div id="dynamicFields" class="composer-grid" hidden>
+          <input id="eventDateInput" type="date">
+          <input id="amountInput" type="number" min="0" step="100" placeholder="금액">
+        </div>
+        <button id="addButton" class="primary-button">추가하기</button>
+      </article>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <h2 id="listTitle">전체 기록</h2>
+          <button id="refreshButton" class="text-button">새로고침</button>
+        </div>
+        <div id="loadingText" class="state-text">불러오는 중...</div>
+        <div id="emptyText" class="state-text" hidden>아직 등록된 내용이 없습니다.</div>
+        <ul id="itemList" class="item-list"></ul>
+      </section>
+    </section>
+
+    <section id="calendarView" class="view">
+      <article class="calendar-card">
+        <div class="calendar-toolbar">
+          <button id="prevMonth" class="icon-button">‹</button>
+          <h2 id="calendarTitle"></h2>
+          <button id="nextMonth" class="icon-button">›</button>
+        </div>
+        <div class="weekdays">
+          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </article>
+      <section class="section-block">
+        <h2>선택한 날짜</h2>
+        <div id="selectedDateList" class="mini-list"></div>
+      </section>
+    </section>
+
+    <section id="moneyView" class="view">
+      <article class="hero-card compact">
+        <div>
+          <span class="hero-label">이번 달 지출</span>
+          <strong id="moneyTotal">0원</strong>
+          <p>가계부 항목을 기준으로 계산합니다.</p>
+        </div>
+      </article>
+      <section class="section-block">
+        <h2>카테고리별 지출</h2>
+        <div id="moneyBars" class="money-bars"></div>
+      </section>
+      <section class="section-block">
+        <h2>최근 지출</h2>
+        <div id="moneyList" class="mini-list"></div>
+      </section>
+    </section>
+
+    <section id="settingsView" class="view">
+      <article class="settings-card">
+        <h2>커플 설정</h2>
+        <label>사귀기 시작한 날
+          <input id="anniversaryInput" type="date">
+        </label>
+        <label>첫 번째 이름
+          <input id="partnerOneInput" type="text" value="진성">
+        </label>
+        <label>두 번째 이름
+          <input id="partnerTwoInput" type="text" value="성은">
+        </label>
+        <button id="saveSettingsButton" class="primary-button">설정 저장</button>
+      </article>
+      <article class="settings-card">
+        <h2>앱 정보</h2>
+        <p>우리 둘 V2 · GitHub Pages + Supabase</p>
+        <p class="small-note">계정은 두 개만 만든 뒤 Supabase에서 신규 회원가입을 비활성화하는 것을 권장합니다.</p>
+      </article>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="nav-button active" data-view="home"><span>⌂</span><small>홈</small></button>
+      <button class="nav-button" data-view="records"><span>＋</span><small>기록</small></button>
+      <button class="nav-button" data-view="calendar"><span>□</span><small>달력</small></button>
+      <button class="nav-button" data-view="money"><span>₩</span><small>가계부</small></button>
+      <button class="nav-button" data-view="settings"><span>⚙</span><small>설정</small></button>
     </nav>
-
-    <section class="composer-card">
-      <div class="composer-row">
-        <select id="categoryInput">
-          <option>할 일</option>
-          <option>장보기</option>
-          <option>일정</option>
-          <option>가계부</option>
-          <option>메모</option>
-        </select>
-        <select id="writerInput">
-          <option>진성</option>
-          <option>성은</option>
-        </select>
-      </div>
-
-      <textarea id="contentInput" rows="3" maxlength="200" placeholder="함께 기록할 내용을 입력하세요"></textarea>
-
-      <div id="extraFields" class="composer-row">
-        <input id="eventDateInput" type="date" aria-label="날짜">
-        <input id="amountInput" type="number" min="0" step="100" placeholder="금액">
-      </div>
-
-      <button id="addButton" class="primary-button">추가하기</button>
-    </section>
-
-    <section class="list-section">
-      <div class="section-heading">
-        <h2 id="listTitle">전체 기록</h2>
-        <button id="refreshButton" class="text-button">새로고침</button>
-      </div>
-      <div id="loadingText" class="state-text">불러오는 중...</div>
-      <div id="emptyText" class="state-text" hidden>아직 등록된 내용이 없습니다.</div>
-      <ul id="itemList" class="item-list"></ul>
-    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
