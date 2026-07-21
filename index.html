@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff7f7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="우리 둘">
+  <title>우리 둘</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="toast" class="toast" hidden></div>
+
+  <section id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="heart-mark">♥</div>
+      <h1>우리 둘</h1>
+      <p>둘만의 일정과 기록을 한곳에 모아보세요.</p>
+
+      <label>
+        이메일
+        <input id="emailInput" type="email" autocomplete="email" placeholder="example@email.com">
+      </label>
+      <label>
+        비밀번호
+        <input id="passwordInput" type="password" autocomplete="current-password" minlength="6" placeholder="6자 이상">
+      </label>
+
+      <button id="loginButton" class="primary-button">로그인</button>
+      <button id="signupButton" class="secondary-button">처음 계정 만들기</button>
+      <p class="small-note">두 분이 각각 한 번씩 계정을 만든 뒤, Supabase에서 신규 가입을 꺼두면 더 안전합니다.</p>
+    </div>
+  </section>
+
+  <main id="appScreen" class="app" hidden>
+    <header class="topbar">
+      <div>
+        <p id="todayText" class="eyebrow"></p>
+        <h1>우리 둘</h1>
+      </div>
+      <button id="logoutButton" class="icon-button" aria-label="로그아웃">↗</button>
+    </header>
+
+    <section class="summary-card">
+      <div>
+        <span>남은 할 일</span>
+        <strong id="pendingCount">0</strong>
+      </div>
+      <div>
+        <span>이번 달 기록</span>
+        <strong id="monthCount">0</strong>
+      </div>
+    </section>
+
+    <nav id="categoryNav" class="category-nav">
+      <button class="category-button active" data-category="전체">전체</button>
+      <button class="category-button" data-category="할 일">할 일</button>
+      <button class="category-button" data-category="장보기">장보기</button>
+      <button class="category-button" data-category="일정">일정</button>
+      <button class="category-button" data-category="가계부">가계부</button>
+      <button class="category-button" data-category="메모">메모</button>
+    </nav>
+
+    <section class="composer-card">
+      <div class="composer-row">
+        <select id="categoryInput">
+          <option>할 일</option>
+          <option>장보기</option>
+          <option>일정</option>
+          <option>가계부</option>
+          <option>메모</option>
+        </select>
+        <select id="writerInput">
+          <option>진성</option>
+          <option>성은</option>
+        </select>
+      </div>
+
+      <textarea id="contentInput" rows="3" maxlength="200" placeholder="함께 기록할 내용을 입력하세요"></textarea>
+
+      <div id="extraFields" class="composer-row">
+        <input id="eventDateInput" type="date" aria-label="날짜">
+        <input id="amountInput" type="number" min="0" step="100" placeholder="금액">
+      </div>
+
+      <button id="addButton" class="primary-button">추가하기</button>
+    </section>
+
+    <section class="list-section">
+      <div class="section-heading">
+        <h2 id="listTitle">전체 기록</h2>
+        <button id="refreshButton" class="text-button">새로고침</button>
+      </div>
+      <div id="loadingText" class="state-text">불러오는 중...</div>
+      <div id="emptyText" class="state-text" hidden>아직 등록된 내용이 없습니다.</div>
+      <ul id="itemList" class="item-list"></ul>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
