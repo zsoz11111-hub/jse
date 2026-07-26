@@ -6,175 +6,75 @@
   <meta name="theme-color" content="#fbf7f7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="우리 둘">
-  <title>우리 둘 V4</title>
+  <title>우리 둘 V7</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <div id="toast" class="toast" hidden></div>
-
   <section id="profileScreen" class="profile-screen">
     <div class="profile-card">
-      <div class="heart">♥</div>
-      <p class="eyebrow">OUR PRIVATE SPACE</p>
-      <h1>누구인가요?</h1>
+      <div class="heart">♥</div><p class="eyebrow">OUR PRIVATE SPACE</p><h1>누구인가요?</h1>
       <p>한 번 선택하면 다음부터 바로 앱이 열립니다.</p>
-
-      <button class="profile-choice" data-profile="one">
-        <span class="avatar">1</span>
-        <div><strong id="profileOneName">진성</strong><small>첫 번째 사용자</small></div>
-      </button>
-
-      <button class="profile-choice" data-profile="two">
-        <span class="avatar">2</span>
-        <div><strong id="profileTwoName">성은</strong><small>두 번째 사용자</small></div>
-      </button>
+      <button class="profile-choice" data-profile="one"><span class="avatar">1</span><div><strong id="profileOneName">진성</strong><small>첫 번째 사용자</small></div></button>
+      <button class="profile-choice" data-profile="two"><span class="avatar">2</span><div><strong id="profileTwoName">성은</strong><small>두 번째 사용자</small></div></button>
     </div>
   </section>
 
   <main id="app" hidden>
-    <header class="topbar">
-      <div>
-        <p id="todayText" class="eyebrow"></p>
-        <h1 id="pageTitle">홈</h1>
-      </div>
-      <button id="settingsShortcut" class="round-button">나</button>
-    </header>
+    <header class="topbar"><div><p id="todayText" class="eyebrow"></p><h1 id="pageTitle">홈</h1></div><button id="settingsShortcut" class="round-button">나</button></header>
 
     <section id="homeView" class="view active">
-      <article class="welcome-card">
-        <span>오늘도 함께</span>
-        <strong id="welcomeName"></strong>
-        <p>장보기, 여행, 가계부와 생활 기록을 둘이서 공유하세요.</p>
-      </article>
-
+      <article class="welcome-card"><span>오늘도 함께</span><strong id="welcomeName"></strong><p>장보기, 여행, 일정과 가계부를 둘이서 공유하세요.</p></article>
       <div class="stats-grid">
-        <article><small>살 물건</small><b id="shoppingCount">0</b></article>
-        <article><small>예정 여행</small><b id="tripCount">0</b></article>
-        <article><small>남은 할 일</small><b id="todoCount">0</b></article>
-        <article><small>이번 달 지출</small><b id="homeExpenseTotal">0원</b></article>
+        <article><small>살 물건</small><b id="shoppingCount">0</b></article><article><small>예정 여행</small><b id="tripCount">0</b></article>
+        <article><small>다가오는 일정</small><b id="scheduleCount">0</b></article><article><small>이번 달 지출</small><b id="homeExpenseTotal">0원</b></article>
       </div>
-
-      <section class="section-block">
-        <div class="section-heading">
-          <h2>쇼핑리스트</h2>
-          <button class="text-button" data-go="shopping">전체 보기</button>
-        </div>
-        <div id="homeShopping" class="list"></div>
-      </section>
-
-      <section class="section-block">
-        <div class="section-heading">
-          <h2>다가오는 여행</h2>
-          <button class="text-button" data-go="travel">전체 보기</button>
-        </div>
-        <div id="homeTrips" class="list"></div>
-      </section>
+      <section class="section-block"><div class="section-heading"><h2>다가오는 일정</h2><button class="text-button" data-go="schedule">전체 보기</button></div><div id="homeSchedules" class="list"></div></section>
+      <section class="section-block"><div class="section-heading"><h2>다가오는 여행</h2><button class="text-button" data-go="travel">전체 보기</button></div><div id="homeTrips" class="list"></div></section>
     </section>
 
     <section id="shoppingView" class="view">
-      <article class="panel">
-        <input id="shopItem" placeholder="살 물건">
-        <div class="grid">
-          <input id="shopQty" placeholder="수량·규격">
-          <select id="shopStore">
-            <option value="">구매처 선택 안 함</option>
-            <option>마트</option><option>시장</option><option>온라인</option>
-            <option>편의점</option><option>기타</option>
-          </select>
-        </div>
-        <button id="addShop" class="primary-button">쇼핑리스트에 추가</button>
-      </article>
-
-      <div class="section-heading">
-        <h2>장볼 목록</h2>
-        <button id="clearBought" class="text-button">구매완료 정리</button>
-      </div>
-      <div id="shoppingList" class="list"></div>
+      <article class="panel"><input id="shopItem" placeholder="살 물건"><div class="grid"><input id="shopQty" placeholder="수량·규격"><select id="shopStore"><option value="">구매처 선택 안 함</option><option>마트</option><option>시장</option><option>온라인</option><option>편의점</option><option>기타</option></select></div><button id="addShop" class="primary-button">쇼핑리스트에 추가</button></article>
+      <div class="section-heading"><h2>장볼 목록</h2><button id="clearBought" class="text-button">구매완료 정리</button></div><div id="shoppingList" class="list"></div>
     </section>
 
     <section id="travelView" class="view">
-      <article class="panel">
-        <input id="tripTitle" placeholder="여행 이름 또는 목적지">
-        <div class="grid">
-          <input id="tripStart" type="date">
-          <input id="tripEnd" type="date">
-        </div>
-        <textarea id="tripMemo" rows="5" placeholder="숙소, 교통, 준비물, 일정 등 여행 정보를 적으세요"></textarea>
-        <button id="addTrip" class="primary-button">여행 계획 추가</button>
-      </article>
+      <article class="panel"><input id="tripTitle" placeholder="여행 이름 또는 목적지"><div class="grid"><input id="tripStart" type="date"><input id="tripEnd" type="date"></div><textarea id="tripMemo" rows="5" placeholder="숙소, 교통, 준비물, 일정 등 여행 정보를 적으세요"></textarea><button id="addTrip" class="primary-button">여행 계획 추가</button></article>
+      <h2>여행 계획</h2><div id="tripList" class="list"></div>
+    </section>
 
-      <h2>여행 계획</h2>
-      <div id="tripList" class="list"></div>
+    <section id="scheduleView" class="view">
+      <article class="panel">
+        <h2>일정 입력</h2><input id="scheduleTitle" placeholder="일정 제목">
+        <div class="grid"><input id="scheduleStartDate" type="date"><input id="scheduleEndDate" type="date"></div>
+        <label class="check-line"><input id="scheduleAllDay" type="checkbox" checked> 하루 종일</label>
+        <div id="scheduleTimeRow" class="grid" hidden><input id="scheduleStartTime" type="time"><input id="scheduleEndTime" type="time"></div>
+        <select id="scheduleCategory"></select><input id="scheduleLocation" placeholder="장소 (선택)"><textarea id="scheduleMemo" rows="3" placeholder="메모 (선택)"></textarea>
+        <button id="addSchedule" class="primary-button">일정 저장</button>
+      </article>
+      <div class="section-heading"><h2>일정 목록</h2><button id="openScheduleCategories" class="text-button">카테고리 관리</button></div>
+      <div id="scheduleFilters" class="chip-row"></div><div id="scheduleList" class="list"></div>
     </section>
 
     <section id="moneyView" class="view">
-      <article class="money-summary-card">
-        <span>이번 달 지출</span>
-        <strong id="monthExpenseTotal">0원</strong>
-        <small id="monthExpenseCount">0건</small>
-      </article>
-
-      <article class="panel quick-money-panel">
-        <h2>지출 입력</h2>
-        <div class="amount-input-wrap">
-          <input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0">
-          <span>원</span>
-        </div>
-        <input id="moneyContent" placeholder="사용한 곳 또는 내용">
-        <div class="grid">
-          <select id="moneyCategory">
-            <option>식비</option>
-            <option>생활용품</option>
-            <option>교통</option>
-            <option>쇼핑</option>
-            <option>주거</option>
-            <option>여행</option>
-            <option>의료</option>
-            <option>기타</option>
-          </select>
-          <select id="moneyWriter"></select>
-        </div>
-        <input id="moneyDate" type="date">
-        <button id="addMoney" class="primary-button">지출 저장</button>
-      </article>
-
-      <section class="section-block">
-        <div class="section-heading">
-          <h2>이번 달 내역</h2>
-          <button id="openQuickMoney" class="text-button">빠른 입력</button>
-        </div>
-        <div id="moneyList" class="list"></div>
-      </section>
+      <article class="money-summary-card"><span>이번 달 지출</span><strong id="monthExpenseTotal">0원</strong><small id="monthExpenseCount">0건</small></article>
+      <article class="panel quick-money-panel"><div class="section-heading"><h2>지출 입력</h2><button id="openMoneyCategories" class="text-button">카테고리 관리</button></div><div class="amount-input-wrap"><input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0"><span>원</span></div><input id="moneyContent" placeholder="사용한 곳 또는 내용"><div class="grid"><select id="moneyCategory"></select><select id="moneyWriter"></select></div><input id="moneyDate" type="date"><button id="addMoney" class="primary-button">지출 저장</button></article>
+      <section class="section-block"><div class="section-heading"><h2>이번 달 내역</h2><button id="openQuickMoney" class="text-button">빠른 입력</button></div><div id="moneyList" class="list"></div></section>
     </section>
 
     <section id="settingsView" class="view">
-      <article class="panel">
-        <h2>두 사람 설정</h2>
-        <label>첫 번째 이름<input id="partnerOneInput"></label>
-        <label>두 번째 이름<input id="partnerTwoInput"></label>
-        <button id="saveSettings" class="primary-button">설정 저장</button>
-      </article>
-
-      <article class="panel">
-        <h2>이 기기 설정</h2>
-        <p id="currentProfileText"></p>
-        <button id="changeProfile" class="secondary-button">이 기기 사용자 변경</button>
-      </article>
+      <article class="panel"><h2>두 사람 설정</h2><label>첫 번째 이름<input id="partnerOneInput"></label><label>두 번째 이름<input id="partnerTwoInput"></label><button id="saveSettings" class="primary-button">설정 저장</button></article>
+      <article class="panel"><h2>이 기기 설정</h2><p id="currentProfileText"></p><button id="changeProfile" class="secondary-button">이 기기 사용자 변경</button></article>
     </section>
 
     <nav class="bottom-nav">
-      <button class="nav-button active" data-view="home"><span>⌂</span><small>홈</small></button>
-      <button class="nav-button" data-view="shopping"><span>☑</span><small>장보기</small></button>
-      <button class="nav-button" data-view="travel"><span>✈</span><small>여행</small></button>
-      <button class="nav-button" data-view="money"><span>₩</span><small>가계부</small></button>
-      <button class="nav-button" data-view="settings"><span>⚙</span><small>설정</small></button>
+      <button class="nav-button active" data-view="home"><span>⌂</span><small>홈</small></button><button class="nav-button" data-view="shopping"><span>☑</span><small>장보기</small></button><button class="nav-button" data-view="travel"><span>✈</span><small>여행</small></button><button class="nav-button" data-view="schedule"><span>▣</span><small>일정</small></button><button class="nav-button" data-view="money"><span>₩</span><small>가계부</small></button><button class="nav-button" data-view="settings"><span>⚙</span><small>설정</small></button>
     </nav>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./config.js"></script>
-  <script src="./app.js"></script>
-</body>
-</html>
+  <dialog id="categoryDialog" class="category-dialog"><form method="dialog"><div class="section-heading"><h2 id="categoryDialogTitle">카테고리 관리</h2><button class="dialog-close" value="cancel">×</button></div><div id="categoryManageList" class="category-manage-list"></div><div class="category-add-row"><input id="newCategoryName" placeholder="새 카테고리 이름"><button id="addCategoryButton" type="button" class="primary-button">추가</button></div><p class="help-text">사용 중인 카테고리를 삭제하면 해당 항목은 ‘미분류’로 이동합니다.</p></form></dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script src="./app.js"></script>
+</body></html>

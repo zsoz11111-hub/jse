@@ -1,7 +1,7 @@
 {
-  "name": "우리 둘 V5",
+  "name": "우리 둘 V7",
   "short_name": "우리 둘",
-  "description": "장보기·여행·가계부 공유 앱",
+  "description": "장보기·여행·일정·가계부 공유 앱",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
