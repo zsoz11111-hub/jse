@@ -74,6 +74,8 @@
     </nav>
   </main>
 
+  <dialog id="editDialog" class="edit-dialog"><form method="dialog" onsubmit="return false"><div class="section-heading"><h2 id="editDialogTitle">항목 수정</h2><button class="dialog-close" value="cancel">×</button></div><div id="editFormFields" class="edit-form-fields"></div><div class="edit-dialog-actions"><button type="button" class="secondary-button" onclick="document.getElementById('editDialog').close()">취소</button><button id="saveEditButton" type="button" class="primary-button">수정 내용 저장</button></div></form></dialog>
+
   <dialog id="categoryDialog" class="category-dialog"><form method="dialog"><div class="section-heading"><h2 id="categoryDialogTitle">카테고리 관리</h2><button class="dialog-close" value="cancel">×</button></div><div id="categoryManageList" class="category-manage-list"></div><div class="category-add-row"><input id="newCategoryName" placeholder="새 카테고리 이름"><button id="addCategoryButton" type="button" class="primary-button">추가</button></div><p class="help-text">사용 중인 카테고리를 삭제하면 해당 항목은 ‘미분류’로 이동합니다.</p></form></dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script src="./app.js"></script>

@@ -42,47 +42,55 @@ function renderMini(container,list,emptyText){container.innerHTML="";if(!list.le
 async function addShopping(){const item=$("#shopItem").value.trim();if(!item)return toast("살 물건을 입력하세요.");const {error}=await sb.from("shopping_items").insert({item_name:item,quantity:$("#shopQty").value.trim()||null,store:$("#shopStore").value||null,completed:false,writer:currentName()});if(error)return toast("추가하지 못했습니다.");$("#shopItem").value="";$("#shopQty").value="";await loadAll()}
 async function toggleShopping(item){await sb.from("shopping_items").update({completed:!item.completed}).eq("id",item.id);await loadAll()}
 
-async function editShopping(x){
-  const item=prompt("물건 이름을 수정하세요.",x.item_name||"");if(item===null)return;
-  const name=item.trim();if(!name)return toast("물건 이름을 입력하세요.");
-  const quantity=prompt("수량을 수정하세요.",x.quantity||"");if(quantity===null)return;
-  const store=prompt("구매 장소를 수정하세요.",x.store||"");if(store===null)return;
-  const {error}=await sb.from("shopping_items").update({item_name:name,quantity:quantity.trim()||null,store:store.trim()||null}).eq("id",x.id);
-  if(error)return toast("장보기 항목을 수정하지 못했습니다.");await loadAll();toast("장보기 항목을 수정했습니다.")
+function editField(label,id,type="text",value="",options=null){
+  const wrap=document.createElement("label");wrap.textContent=label;
+  let input;
+  if(options){input=document.createElement("select");options.forEach(o=>input.add(new Option(o,o)));input.value=value||options[0]||""}
+  else if(type==="textarea"){input=document.createElement("textarea");input.rows=4;input.value=value||""}
+  else{input=document.createElement("input");input.type=type;input.value=value??""}
+  input.id=id;wrap.append(input);return wrap
 }
-async function editTrip(x){
-  const title=prompt("여행 이름이나 목적지를 수정하세요.",x.title||"");if(title===null)return;
-  const name=title.trim();if(!name)return toast("여행 이름을 입력하세요.");
-  const start=prompt("시작 날짜를 YYYY-MM-DD 형식으로 입력하세요.",x.start_date||"");if(start===null)return;
-  const end=prompt("종료 날짜를 YYYY-MM-DD 형식으로 입력하세요.",x.end_date||start||"");if(end===null)return;
-  if(start&&end&&end<start)return toast("종료 날짜를 확인하세요.");
-  const memo=prompt("여행 메모를 수정하세요.",x.memo||"");if(memo===null)return;
-  const {error}=await sb.from("travel_plans").update({title:name,start_date:start||null,end_date:end||start||null,memo:memo.trim()||null}).eq("id",x.id);
-  if(error)return toast("여행 계획을 수정하지 못했습니다.");await loadAll();toast("여행 계획을 수정했습니다.")
+function openEditDialog(type,x){
+  state.editing={type,item:x};const form=$("#editFormFields");form.innerHTML="";
+  const titleMap={shopping:"장보기 수정",travel:"여행 수정",schedule:"일정 수정",money:"가계부 수정"};
+  $("#editDialogTitle").textContent=titleMap[type];
+  if(type==="shopping"){
+    form.append(editField("물건 이름","editName","text",x.item_name),editField("수량","editQuantity","text",x.quantity||""),editField("구매 장소","editStore","text",x.store||""));
+  }else if(type==="travel"){
+    form.append(editField("여행 이름 또는 목적지","editName","text",x.title),editField("시작 날짜","editStart","date",x.start_date||""),editField("종료 날짜","editEnd","date",x.end_date||x.start_date||""),editField("여행 메모","editMemo","textarea",x.memo||""));
+  }else if(type==="schedule"){
+    const cats=(state.scheduleCategories.length?state.scheduleCategories.map(c=>c.name):["미분류"]);if(x.category&&!cats.includes(x.category))cats.push(x.category);
+    form.append(editField("일정 제목","editName","text",x.title),editField("시작 날짜","editStart","date",x.start_date||""),editField("종료 날짜","editEnd","date",x.end_date||x.start_date||""));
+    const allWrap=document.createElement("label");allWrap.className="edit-check-line";const all=document.createElement("input");all.type="checkbox";all.id="editAllDay";all.checked=x.all_day!==false;allWrap.append(all,document.createTextNode("하루 종일"));form.append(allWrap);
+    const timeRow=document.createElement("div");timeRow.className="grid";timeRow.id="editTimeRow";timeRow.append(editField("시작 시간","editStartTime","time",x.start_time||"09:00"),editField("종료 시간","editEndTime","time",x.end_time||"10:00"));timeRow.hidden=all.checked;form.append(timeRow);
+    all.onchange=()=>timeRow.hidden=all.checked;
+    form.append(editField("카테고리","editCategory","select",x.category||"미분류",cats),editField("장소","editLocation","text",x.location||""),editField("메모","editMemo","textarea",x.memo||""));
+  }else if(type==="money"){
+    const cats=(state.expenseCategories.length?state.expenseCategories.map(c=>c.name):["미분류"]);if(x.expense_group&&!cats.includes(x.expense_group))cats.push(x.expense_group);
+    const writers=[state.settings.partner_one,state.settings.partner_two];if(x.writer&&!writers.includes(x.writer))writers.push(x.writer);
+    form.append(editField("사용처 또는 내용","editName","text",x.content),editField("금액","editAmount","number",x.amount||""),editField("날짜","editDate","date",x.event_date||iso()),editField("카테고리","editCategory","select",x.expense_group||"미분류",cats),editField("작성자","editWriter","select",x.writer||currentName(),writers));
+  }
+  const start=$("#editStart"),endDate=$("#editEnd");if(start&&endDate)start.onchange=()=>{if(!endDate.value||endDate.value<start.value)endDate.value=start.value};
+  $("#editDialog").showModal();setTimeout(()=>$("#editName")?.focus(),80)
 }
-async function editSchedule(x){
-  const title=prompt("일정 제목을 수정하세요.",x.title||"");if(title===null)return;
-  const name=title.trim();if(!name)return toast("일정 제목을 입력하세요.");
-  const start=prompt("시작 날짜를 YYYY-MM-DD 형식으로 입력하세요.",x.start_date||"");if(start===null||!start)return;
-  const end=prompt("종료 날짜를 YYYY-MM-DD 형식으로 입력하세요.",x.end_date||start);if(end===null)return;
-  if((end||start)<start)return toast("종료 날짜를 확인하세요.");
-  const category=prompt("카테고리를 수정하세요.",x.category||"미분류");if(category===null)return;
-  const location=prompt("장소를 수정하세요.",x.location||"");if(location===null)return;
-  const memo=prompt("메모를 수정하세요.",x.memo||"");if(memo===null)return;
-  const {error}=await sb.from("schedule_events").update({title:name,start_date:start,end_date:end||start,category:category.trim()||"미분류",location:location.trim()||null,memo:memo.trim()||null}).eq("id",x.id);
-  if(error)return toast("일정을 수정하지 못했습니다.");localStorage.removeItem(localCalendarKey({...x,source:"schedule"}));await loadAll();toast("일정을 수정했습니다.")
+async function saveEditedItem(){
+  const e=state.editing;if(!e)return;const x=e.item;let table,payload;
+  const name=$("#editName")?.value.trim();if(!name)return toast(e.type==="money"?"사용처나 내용을 입력하세요.":"이름이나 제목을 입력하세요.");
+  if(e.type==="shopping"){
+    table="shopping_items";payload={item_name:name,quantity:$("#editQuantity").value.trim()||null,store:$("#editStore").value.trim()||null};
+  }else if(e.type==="travel"){
+    const start=$("#editStart").value,end=$("#editEnd").value||start;if(start&&end<start)return toast("종료 날짜를 확인하세요.");table="travel_plans";payload={title:name,start_date:start||null,end_date:end||null,memo:$("#editMemo").value.trim()||null};
+  }else if(e.type==="schedule"){
+    const start=$("#editStart").value,end=$("#editEnd").value||start;if(!start)return toast("시작 날짜를 선택하세요.");if(end<start)return toast("종료 날짜를 확인하세요.");const all=$("#editAllDay").checked;table="schedule_events";payload={title:name,start_date:start,end_date:end,all_day:all,start_time:all?null:$("#editStartTime").value||null,end_time:all?null:$("#editEndTime").value||null,category:$("#editCategory").value||"미분류",location:$("#editLocation").value.trim()||null,memo:$("#editMemo").value.trim()||null};localStorage.removeItem(localCalendarKey({...x,source:"schedule"}));
+  }else{
+    const amount=Number($("#editAmount").value);if(!amount||amount<=0)return toast("금액을 확인하세요.");table="couple_items";payload={content:name,amount,event_date:$("#editDate").value||iso(),expense_group:$("#editCategory").value||"미분류",writer:$("#editWriter").value||currentName()};
+  }
+  const {error}=await sb.from(table).update(payload).eq("id",x.id);if(error)return toast("수정하지 못했습니다.");$("#editDialog").close();state.editing=null;await loadAll();toast("수정했습니다.")
 }
-async function editMoney(x){
-  const content=prompt("사용처 또는 내용을 수정하세요.",x.content||"");if(content===null)return;
-  const name=content.trim();if(!name)return toast("사용처나 내용을 입력하세요.");
-  const amountText=prompt("금액을 숫자로 입력하세요.",String(x.amount||""));if(amountText===null)return;
-  const amount=Number(String(amountText).replaceAll(",",""));if(!amount||amount<=0)return toast("금액을 확인하세요.");
-  const date=prompt("날짜를 YYYY-MM-DD 형식으로 입력하세요.",x.event_date||iso());if(date===null||!date)return;
-  const group=prompt("가계부 카테고리를 수정하세요.",x.expense_group||"미분류");if(group===null)return;
-  const writer=prompt("작성자를 수정하세요.",x.writer||currentName());if(writer===null)return;
-  const {error}=await sb.from("couple_items").update({content:name,amount,event_date:date,expense_group:group.trim()||"미분류",writer:writer.trim()||currentName()}).eq("id",x.id);
-  if(error)return toast("지출 내역을 수정하지 못했습니다.");await loadAll();toast("지출 내역을 수정했습니다.")
-}
+function editShopping(x){openEditDialog("shopping",x)}
+function editTrip(x){openEditDialog("travel",x)}
+function editSchedule(x){openEditDialog("schedule",x)}
+function editMoney(x){openEditDialog("money",x)}
 function editButton(handler){const b=document.createElement("button");b.className="small-button";b.textContent="수정";b.onclick=handler;return b}
 async function removeRow(table,id,message="삭제할까요?"){if(!confirm(message))return;await sb.from(table).delete().eq("id",id);await loadAll()}
 function renderShopping(){els.shoppingList.innerHTML="";if(!state.shopping.length){els.shoppingList.innerHTML='<div class="empty">쇼핑리스트가 비어 있습니다.</div>';return}state.shopping.forEach(x=>{const row=document.createElement("div");row.className=`list-item ${x.completed?"done":""}`;const check=document.createElement("button");check.className="check-button";check.textContent=x.completed?"✓":"";check.onclick=()=>toggleShopping(x);const body=document.createElement("div");body.innerHTML="<strong></strong><div class='meta'></div>";body.querySelector("strong").textContent=x.item_name;body.querySelector(".meta").textContent=[x.quantity,x.store,x.writer].filter(Boolean).join(" · ");const actions=document.createElement("div");actions.className="item-actions";const edit=editButton(()=>editShopping(x));const del=document.createElement("button");del.className="delete-button";del.textContent="삭제";del.onclick=()=>removeRow("shopping_items",x.id);actions.append(edit,del);row.append(check,body,actions);els.shoppingList.append(row)})}
@@ -106,7 +114,7 @@ async function deleteCategory(item){if(!confirm(`'${item.name}' 카테고리를 
 async function saveSettings(){const payload={id:1,partner_one:$("#partnerOneInput").value.trim()||"진성",partner_two:$("#partnerTwoInput").value.trim()||"성은"};const {error}=await sb.from("couple_settings").upsert(payload);if(error)return toast("설정을 저장하지 못했습니다.");state.settings={...state.settings,...payload};renderAll();toast("설정을 저장했습니다.")}
 function openQuickMoney(){switchView("money");const panel=$(".quick-money-panel");panel?.classList.remove("quick-money-focus");requestAnimationFrame(()=>panel?.classList.add("quick-money-focus"));setTimeout(()=>$("#moneyAmount")?.focus(),150)}
 function handleLaunchRoute(){const params=new URLSearchParams(location.search);if(params.get("quick")==="expense"||location.hash==="#expense")openQuickMoney()}
-$$('.profile-choice').forEach(b=>b.onclick=()=>chooseProfile(b.dataset.profile));$$('.nav-button').forEach(b=>b.onclick=()=>switchView(b.dataset.view));$$('[data-go]').forEach(b=>b.onclick=()=>switchView(b.dataset.go));$("#settingsShortcut").onclick=()=>switchView("settings");$("#addShop").onclick=addShopping;$("#clearBought").onclick=async()=>{await sb.from("shopping_items").delete().eq("completed",true);await loadAll()};$("#addTrip").onclick=addTrip;$("#tripStart").onchange=e=>{const end=$("#tripEnd");if(!end.value||end.value<e.target.value)end.value=e.target.value};$("#addSchedule").onclick=addSchedule;$("#scheduleStartDate").onchange=e=>{const end=$("#scheduleEndDate");if(!end.value||end.value<e.target.value)end.value=e.target.value};$("#scheduleAllDay").onchange=e=>$("#scheduleTimeRow").hidden=e.target.checked;$("#addMoney").onclick=addMoney;$("#openQuickMoney").onclick=openQuickMoney;$("#openScheduleCategories").onclick=()=>openCategoryManager("schedule");$("#openMoneyCategories").onclick=()=>openCategoryManager("money");$("#addCategoryButton").onclick=addCategory;$("#saveSettings").onclick=saveSettings;$("#changeProfile").onclick=()=>{localStorage.removeItem("couple_profile");state.profile=null;els.app.hidden=true;els.profileScreen.hidden=false};
+$$('.profile-choice').forEach(b=>b.onclick=()=>chooseProfile(b.dataset.profile));$$('.nav-button').forEach(b=>b.onclick=()=>switchView(b.dataset.view));$$('[data-go]').forEach(b=>b.onclick=()=>switchView(b.dataset.go));$("#settingsShortcut").onclick=()=>switchView("settings");$("#addShop").onclick=addShopping;$("#clearBought").onclick=async()=>{await sb.from("shopping_items").delete().eq("completed",true);await loadAll()};$("#addTrip").onclick=addTrip;$("#tripStart").onchange=e=>{const end=$("#tripEnd");if(!end.value||end.value<e.target.value)end.value=e.target.value};$("#addSchedule").onclick=addSchedule;$("#scheduleStartDate").onchange=e=>{const end=$("#scheduleEndDate");if(!end.value||end.value<e.target.value)end.value=e.target.value};$("#scheduleAllDay").onchange=e=>$("#scheduleTimeRow").hidden=e.target.checked;$("#addMoney").onclick=addMoney;$("#openQuickMoney").onclick=openQuickMoney;$("#openScheduleCategories").onclick=()=>openCategoryManager("schedule");$("#openMoneyCategories").onclick=()=>openCategoryManager("money");$("#addCategoryButton").onclick=addCategory;$("#saveEditButton").onclick=saveEditedItem;$("#saveSettings").onclick=saveSettings;$("#changeProfile").onclick=()=>{localStorage.removeItem("couple_profile");state.profile=null;els.app.hidden=true;els.profileScreen.hidden=false};
 $("#moneyDate").value=iso();els.today.textContent=new Intl.DateTimeFormat("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(new Date());if(state.profile)openApp();
 sb.channel("couple-v7-live").on("postgres_changes",{event:"*",schema:"public",table:"shopping_items"},loadAll).on("postgres_changes",{event:"*",schema:"public",table:"travel_plans"},loadAll).on("postgres_changes",{event:"*",schema:"public",table:"couple_items"},loadAll).on("postgres_changes",{event:"*",schema:"public",table:"couple_settings"},loadAll).on("postgres_changes",{event:"*",schema:"public",table:"schedule_events"},loadAll).on("postgres_changes",{event:"*",schema:"public",table:"schedule_categories"},loadAll).on("postgres_changes",{event:"*",schema:"public",table:"expense_categories"},loadAll).subscribe();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js"));
