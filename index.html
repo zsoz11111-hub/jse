@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#fbf7f7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="우리 둘">
-  <title>우리 둘 V7</title>
+  <title>우리 둘 V10</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
   <link rel="stylesheet" href="./style.css">
@@ -37,12 +37,12 @@
 
     <section id="shoppingView" class="view">
       <article class="panel"><input id="shopItem" placeholder="살 물건"><div class="grid"><input id="shopQty" placeholder="수량·규격"><select id="shopStore"><option value="">구매처 선택 안 함</option><option>마트</option><option>시장</option><option>온라인</option><option>편의점</option><option>기타</option></select></div><button id="addShop" class="primary-button">쇼핑리스트에 추가</button></article>
-      <div class="section-heading"><h2>장볼 목록</h2><button id="clearBought" class="text-button">구매완료 정리</button></div><div id="shoppingList" class="list"></div>
+      <div class="section-heading"><h2>장볼 목록</h2><button id="clearBought" class="text-button">구매완료 정리</button></div><div class="filter-bar"><input id="shoppingSearch" placeholder="물건 검색"><select id="shoppingStatusFilter"><option value="all">전체</option><option value="open">미구매</option><option value="done">구매완료</option></select></div><div id="shoppingList" class="list"></div>
     </section>
 
     <section id="travelView" class="view">
       <article class="panel"><input id="tripTitle" placeholder="여행 이름 또는 목적지"><div class="grid"><input id="tripStart" type="date"><input id="tripEnd" type="date"></div><textarea id="tripMemo" rows="5" placeholder="숙소, 교통, 준비물, 일정 등 여행 정보를 적으세요"></textarea><button id="addTrip" class="primary-button">여행 계획 추가</button></article>
-      <h2>여행 계획</h2><div id="tripList" class="list"></div>
+      <div class="section-heading"><h2>여행 계획</h2></div><div class="filter-bar"><input id="travelSearch" placeholder="여행 검색"><select id="travelStatusFilter"><option value="all">전체</option><option value="upcoming">예정</option><option value="ongoing">진행중</option><option value="past">완료</option></select></div><div id="tripList" class="list"></div>
     </section>
 
     <section id="scheduleView" class="view">
@@ -55,13 +55,13 @@
         <button id="addSchedule" class="primary-button">일정 저장</button>
       </article>
       <div class="section-heading"><h2>일정 목록</h2><button id="openScheduleCategories" class="text-button">카테고리 관리</button></div>
-      <div id="scheduleFilters" class="chip-row"></div><div id="scheduleList" class="list"></div>
+      <div class="filter-bar"><input id="scheduleSearch" placeholder="일정 검색"><select id="scheduleDateFilter"><option value="all">전체 기간</option><option value="today">오늘</option><option value="week">이번 주</option><option value="month">이번 달</option><option value="future">다가오는 일정</option></select></div><div id="scheduleFilters" class="chip-row"></div><div id="scheduleList" class="list"></div>
     </section>
 
     <section id="moneyView" class="view">
       <article class="money-summary-card"><span>이번 달 지출</span><strong id="monthExpenseTotal">0원</strong><small id="monthExpenseCount">0건</small></article>
       <article class="panel quick-money-panel"><div class="section-heading"><h2>지출 입력</h2><button id="openMoneyCategories" class="text-button">카테고리 관리</button></div><div class="amount-input-wrap"><input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0"><span>원</span></div><input id="moneyContent" placeholder="사용한 곳 또는 내용"><div class="grid"><select id="moneyCategory"></select><select id="moneyWriter"></select></div><input id="moneyDate" type="date"><button id="addMoney" class="primary-button">지출 저장</button></article>
-      <section class="section-block"><div class="section-heading"><h2>이번 달 내역</h2><button id="openQuickMoney" class="text-button">빠른 입력</button></div><div id="moneyList" class="list"></div></section>
+      <section class="section-block"><div class="section-heading"><h2>지출 내역</h2><button id="openQuickMoney" class="text-button">빠른 입력</button></div><div class="filter-bar money-filter-bar"><input id="moneySearch" placeholder="사용처 검색"><select id="moneyPeriodFilter"><option value="thisMonth">이번 달</option><option value="lastMonth">지난달</option><option value="all">전체</option></select><select id="moneyCategoryFilter"><option value="all">전체 카테고리</option></select></div><div id="moneyList" class="list"></div></section>
     </section>
 
     <section id="settingsView" class="view">
@@ -74,9 +74,11 @@
     </nav>
   </main>
 
-  <dialog id="editDialog" class="edit-dialog"><form method="dialog" onsubmit="return false"><div class="section-heading"><h2 id="editDialogTitle">항목 수정</h2><button class="dialog-close" value="cancel">×</button></div><div id="editFormFields" class="edit-form-fields"></div><div class="edit-dialog-actions"><button type="button" class="secondary-button" onclick="document.getElementById('editDialog').close()">취소</button><button id="saveEditButton" type="button" class="primary-button">수정 내용 저장</button></div></form></dialog>
+  <dialog id="editDialog" class="edit-dialog"><form method="dialog" onsubmit="return false"><div class="section-heading"><h2 id="editDialogTitle">항목 수정</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><div id="editFormFields" class="edit-form-fields"></div><div class="edit-dialog-actions"><button type="button" class="secondary-button" onclick="document.getElementById('editDialog').close()">취소</button><button id="saveEditButton" type="button" class="primary-button">수정 내용 저장</button></div></form></dialog>
 
-  <dialog id="categoryDialog" class="category-dialog"><form method="dialog"><div class="section-heading"><h2 id="categoryDialogTitle">카테고리 관리</h2><button class="dialog-close" value="cancel">×</button></div><div id="categoryManageList" class="category-manage-list"></div><div class="category-add-row"><input id="newCategoryName" placeholder="새 카테고리 이름"><button id="addCategoryButton" type="button" class="primary-button">추가</button></div><p class="help-text">사용 중인 카테고리를 삭제하면 해당 항목은 ‘미분류’로 이동합니다.</p></form></dialog>
+  <dialog id="categoryDialog" class="category-dialog"><form method="dialog"><div class="section-heading"><h2 id="categoryDialogTitle">카테고리 관리</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><div id="categoryManageList" class="category-manage-list"></div><div class="category-add-row"><input id="newCategoryName" placeholder="새 카테고리 이름"><button id="addCategoryButton" type="button" class="primary-button">추가</button></div><p class="help-text">사용 중인 카테고리를 삭제하면 해당 항목은 ‘미분류’로 이동합니다.</p></form></dialog>
 
+
+  <dialog id="calendarDialog" class="category-dialog"><form onsubmit="return false"><div class="section-heading"><h2>캘린더에 추가</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><p class="help-text calendar-help">갤럭시는 ‘휴대폰 캘린더로 보내기’를 누른 뒤 공유 목록에서 삼성 캘린더를 선택하세요. Google 캘린더는 등록 화면이 바로 열립니다.</p><div class="calendar-choice-actions"><button id="shareDeviceCalendar" type="button" class="primary-button">휴대폰 캘린더로 보내기</button><button id="openGoogleCalendar" type="button" class="secondary-button">Google 캘린더로 열기</button></div></form></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script src="./app.js"></script>
 </body></html>
