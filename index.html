@@ -80,9 +80,26 @@
     </section>
 
     <section id="moneyView" class="view">
-      <article class="money-summary-card"><span>이번 달 지출</span><strong id="monthExpenseTotal">0원</strong><small id="monthExpenseCount">0건</small></article>
-      <article class="panel quick-money-panel"><div class="section-heading"><h2>지출 입력</h2><button id="openMoneyCategories" class="text-button">카테고리 관리</button></div><div class="amount-input-wrap"><input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0"><span>원</span></div><input id="moneyContent" placeholder="사용한 곳 또는 내용"><div class="grid"><select id="moneyCategory"></select><select id="moneyWriter"></select></div><input id="moneyDate" type="date"><button id="addMoney" class="primary-button">지출 저장</button></article>
-      <section class="section-block"><div class="section-heading"><h2>지출 내역</h2><button id="openQuickMoney" class="text-button">빠른 입력</button></div><div class="filter-bar money-filter-bar"><input id="moneySearch" placeholder="사용처 검색"><select id="moneyPeriodFilter"><option value="thisMonth">이번 달</option><option value="lastMonth">지난달</option><option value="all">전체</option></select><select id="moneyCategoryFilter"><option value="all">전체 카테고리</option></select></div><div id="moneyList" class="list"></div></section>
+      <div class="money-view-toolbar">
+        <div class="view-toggle money-view-toggle" role="tablist" aria-label="가계부 보기 방식">
+          <button id="moneyListViewButton" class="active" type="button">리스트</button>
+          <button id="moneySummaryViewButton" type="button">월별 정산</button>
+        </div>
+        <button id="openMoneyCategories" class="text-button">카테고리 관리</button>
+      </div>
+      <section id="moneyListSection">
+        <article class="money-summary-card"><span>이번 달 지출</span><strong id="monthExpenseTotal">0원</strong><small id="monthExpenseCount">0건</small></article>
+        <article class="panel quick-money-panel"><div class="section-heading"><h2>지출 입력</h2><button id="openQuickMoney" class="text-button">빠른 입력</button></div><div class="amount-input-wrap"><input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0"><span>원</span></div><input id="moneyContent" placeholder="사용한 곳 또는 내용"><div class="grid"><select id="moneyCategory"></select><select id="moneyWriter"></select></div><input id="moneyDate" type="date"><button id="addMoney" class="primary-button">지출 저장</button></article>
+        <section class="section-block"><div class="section-heading"><h2>지출 내역</h2></div><div class="filter-bar money-filter-bar"><input id="moneySearch" placeholder="사용처 검색"><select id="moneyPeriodFilter"><option value="thisMonth">이번 달</option><option value="lastMonth">지난달</option><option value="all">전체</option></select><select id="moneyCategoryFilter"><option value="all">전체 카테고리</option></select></div><div id="moneyList" class="list"></div></section>
+      </section>
+      <section id="moneySummarySection" hidden>
+        <article class="monthly-summary-panel">
+          <div class="monthly-summary-header"><button id="moneySummaryPrev" type="button" aria-label="이전 달">‹</button><input id="moneySummaryMonth" type="month"><button id="moneySummaryNext" type="button" aria-label="다음 달">›</button></div>
+          <div class="monthly-summary-total"><span>한 달 총지출</span><strong id="moneySummaryTotal">0원</strong><small id="moneySummaryCount">0건</small></div>
+        </article>
+        <section class="section-block"><div class="section-heading"><h2>카테고리별 지출</h2></div><div id="moneyCategorySummary" class="summary-list"></div></section>
+        <section class="section-block"><div class="section-heading"><h2>사람별 지출</h2></div><div id="moneyWriterSummary" class="summary-list"></div></section>
+      </section>
     </section>
 
     <section id="settingsView" class="view">

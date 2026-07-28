@@ -126,3 +126,45 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
   .calendar-day{min-height:62px;padding:4px 3px;border-radius:10px}
   .calendar-event-dot{font-size:7px;padding:2px 3px}
 }
+
+/* V13 iPhone calendar reset + expense monthly summary */
+.calendar-day{
+  -webkit-appearance:none;appearance:none;
+  color:#2f292b;
+  font:inherit;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  vertical-align:top;
+  -webkit-tap-highlight-color:transparent;
+}
+.calendar-day .day-number{align-self:flex-start;margin:0;color:inherit}
+.calendar-day:not(.other-month) .day-number{color:#2f292b}
+.calendar-day.other-month .day-number{color:#c5babc}
+.calendar-day.today .day-number{color:#fff}
+.calendar-event-dot,.calendar-more{flex:0 0 auto;text-align:left}
+.calendar-day button,.calendar-day span{-webkit-text-fill-color:currentColor}
+
+.money-view-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.money-view-toggle{width:min(100%,250px)}
+.money-view-toolbar .text-button{margin-left:auto;white-space:nowrap}
+.monthly-summary-panel{padding:18px;border:1px solid #eadbdd;border-radius:22px;background:linear-gradient(180deg,#fff,#fff8f9);box-shadow:0 8px 24px rgba(93,58,65,.06)}
+.monthly-summary-header{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:10px}
+.monthly-summary-header button{width:42px;height:42px;border:1px solid #eadbdd;border-radius:50%;background:#fff;color:#94606a;font-size:25px}
+.monthly-summary-header input{height:44px;border:1px solid #eadbdd;border-radius:14px;background:#fff;text-align:center;font-weight:800;color:#4c3c40}
+.monthly-summary-total{text-align:center;padding:24px 8px 8px}
+.monthly-summary-total span,.monthly-summary-total small{display:block;color:#9a8589}
+.monthly-summary-total strong{display:block;margin:7px 0 4px;font-size:34px;color:#80555d}
+.summary-list{display:grid;gap:12px}
+.summary-row{padding:14px 15px;border:1px solid #eee2e4;border-radius:16px;background:#fff}
+.summary-row-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+.summary-row-top strong{font-size:14px}.summary-row-top span{font-size:12px;color:#8f7d81;white-space:nowrap}
+.summary-bar{height:7px;overflow:hidden;border-radius:999px;background:#f2e7e9}
+.summary-bar i{display:block;height:100%;border-radius:999px;background:#a66f79}
+@media(max-width:520px){
+  .calendar-day{justify-content:flex-start!important;align-items:stretch!important;padding-top:6px!important}
+  .calendar-day .day-number{line-height:22px;margin-bottom:1px}
+  .money-view-toolbar{gap:8px}.money-view-toggle{width:220px}.money-view-toolbar .text-button{font-size:13px}
+}
+@media(max-width:380px){.money-view-toggle{width:100%}.money-view-toolbar .text-button{width:100%;margin:0;text-align:right}}
