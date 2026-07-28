@@ -46,16 +46,37 @@
     </section>
 
     <section id="scheduleView" class="view">
-      <article class="panel">
-        <h2>일정 입력</h2><input id="scheduleTitle" placeholder="일정 제목">
+      <div class="schedule-view-toolbar">
+        <div class="view-toggle" role="tablist" aria-label="일정 보기 방식">
+          <button id="calendarViewButton" class="active" type="button">달력식</button>
+          <button id="listViewButton" type="button">리스트식</button>
+        </div>
+        <button id="openScheduleCategories" class="text-button">카테고리 관리</button>
+      </div>
+
+      <section id="scheduleCalendarSection">
+        <div class="calendar-header"><button id="calendarPrev" type="button" aria-label="이전 달">‹</button><h2 id="calendarMonthTitle"></h2><button id="calendarNext" type="button" aria-label="다음 달">›</button></div>
+        <div class="calendar-weekdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+        <div id="scheduleCalendar" class="schedule-calendar"></div>
+        <button id="calendarAddSchedule" class="calendar-add-button" type="button">＋ 일정 추가</button>
+        <div id="calendarDayEvents" class="calendar-day-events"></div>
+      </section>
+
+      <section id="scheduleListSection" hidden>
+        <div class="filter-bar"><input id="scheduleSearch" placeholder="일정 검색"><select id="scheduleDateFilter"><option value="future" selected>다가오는 일정</option><option value="today">오늘</option><option value="week">이번 주</option><option value="month">이번 달</option></select></div>
+        <div id="scheduleFilters" class="chip-row"></div>
+        <div class="section-heading"><h2>다가오는 일정</h2></div><div id="scheduleList" class="list"></div>
+        <details class="past-schedule-box"><summary>지난 일정 보기 <span id="pastScheduleCount"></span></summary><div id="pastScheduleList" class="list"></div></details>
+      </section>
+
+      <article id="scheduleFormPanel" class="panel schedule-form-panel" hidden>
+        <div class="section-heading"><h2>일정 입력</h2><button id="closeScheduleForm" class="dialog-close" type="button" aria-label="닫기">×</button></div><input id="scheduleTitle" placeholder="일정 제목">
         <div class="grid"><input id="scheduleStartDate" type="date"><input id="scheduleEndDate" type="date"></div>
         <label class="check-line"><input id="scheduleAllDay" type="checkbox" checked> 하루 종일</label>
         <div id="scheduleTimeRow" class="grid" hidden><input id="scheduleStartTime" type="time"><input id="scheduleEndTime" type="time"></div>
         <select id="scheduleCategory"></select><input id="scheduleLocation" placeholder="장소 (선택)"><textarea id="scheduleMemo" rows="3" placeholder="메모 (선택)"></textarea>
         <button id="addSchedule" class="primary-button">일정 저장</button>
       </article>
-      <div class="section-heading"><h2>일정 목록</h2><button id="openScheduleCategories" class="text-button">카테고리 관리</button></div>
-      <div class="filter-bar"><input id="scheduleSearch" placeholder="일정 검색"><select id="scheduleDateFilter"><option value="all">전체 기간</option><option value="today">오늘</option><option value="week">이번 주</option><option value="month">이번 달</option><option value="future">다가오는 일정</option></select></div><div id="scheduleFilters" class="chip-row"></div><div id="scheduleList" class="list"></div>
     </section>
 
     <section id="moneyView" class="view">
