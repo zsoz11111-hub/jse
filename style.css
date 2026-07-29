@@ -282,4 +282,7 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
   justify-content:center;
   padding:0;
 }
-#scheduleTarget{font-weight:700;color:#6f555a}
+#scheduleTarget{font:inherit;font-weight:400;color:#302a2b}
+.schedule-target-display{font-family:"Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-weight:800;color:#8b5962}
+.schedule-meta{display:flex;flex-wrap:wrap;align-items:center}
+.list-add-schedule{margin-top:0;margin-bottom:12px}
