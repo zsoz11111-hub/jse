@@ -168,3 +168,91 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
   .money-view-toolbar{gap:8px}.money-view-toggle{width:220px}.money-view-toolbar .text-button{font-size:13px}
 }
 @media(max-width:380px){.money-view-toggle{width:100%}.money-view-toolbar .text-button{width:100%;margin:0;text-align:right}}
+
+/* V14 고정 로딩 화면, 일정 입력 모달, 카테고리 순서 변경 */
+.app-splash{position:fixed;inset:0;z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fbf7f7;color:#80555d;transition:opacity .28s ease,visibility .28s ease}
+.app-splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.app-splash-mark{display:grid;place-items:center;width:68px;height:68px;border-radius:24px;background:#fff;box-shadow:0 12px 35px rgba(128,85,93,.14);font-size:34px}
+.app-splash strong{font-size:22px;letter-spacing:-.03em}
+.schedule-entry-dialog{width:min(92vw,560px);max-height:min(84dvh,760px);margin:auto;padding:0;border:0;border-radius:24px;background:#fff;box-shadow:0 24px 70px rgba(70,42,47,.22);overflow:auto}
+.schedule-entry-dialog::backdrop{background:rgba(54,38,42,.32);backdrop-filter:blur(3px)}
+.schedule-entry-dialog form{display:grid;gap:12px;padding:22px}
+.schedule-entry-dialog .section-heading{position:sticky;top:-22px;z-index:2;margin:-22px -22px 2px;padding:20px 22px 12px;background:linear-gradient(#fff 78%,rgba(255,255,255,.92))}
+.schedule-entry-dialog input,.schedule-entry-dialog select,.schedule-entry-dialog textarea{margin:0}
+.schedule-entry-dialog .primary-button{margin:4px 0 0}
+.category-manage-row{grid-template-columns:minmax(0,1fr) auto auto auto!important;align-items:center}
+.category-order-buttons{display:flex;gap:4px}
+.order-button{width:34px;height:34px;padding:0;border:1px solid #eadbdd;border-radius:10px;background:#fff;color:#94606a;font-size:18px;font-weight:900;line-height:1}
+.order-button:disabled{opacity:.28}
+@media(max-width:520px){
+  .schedule-entry-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 110px);border-radius:22px}
+  .schedule-entry-dialog form{padding:18px}
+  .schedule-entry-dialog .section-heading{top:-18px;margin:-18px -18px 2px;padding:18px 18px 10px}
+  .schedule-entry-dialog .grid{grid-template-columns:1fr}
+  .category-manage-row{grid-template-columns:minmax(0,1fr) auto!important;gap:7px!important}
+  .category-order-buttons{grid-column:1/2}
+  .category-manage-row>.small-button,.category-manage-row>.delete-button{grid-row:2}
+}
+
+
+/* V14 inline schedule form iPhone overflow fix */
+.schedule-entry-inline{
+  width:100%;
+  max-width:100%;
+  margin:18px 0 24px;
+  padding:0;
+  border:1px solid #eadbdd;
+  border-radius:22px;
+  background:#fff;
+  box-sizing:border-box;
+  overflow:hidden;
+  scroll-margin-top:20px;
+}
+.schedule-entry-inline[hidden]{display:none!important}
+.schedule-entry-inline form{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:12px;
+  width:100%;
+  max-width:100%;
+  padding:18px;
+  box-sizing:border-box;
+}
+.schedule-entry-inline .section-heading{
+  position:static;
+  margin:0 0 2px;
+  padding:0;
+  background:none;
+}
+.schedule-entry-inline input,
+.schedule-entry-inline select,
+.schedule-entry-inline textarea,
+.schedule-entry-inline button{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin:0;
+}
+.schedule-entry-inline input[type="date"],
+.schedule-entry-inline input[type="time"]{
+  display:block;
+  min-width:0;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.schedule-entry-inline .grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  width:100%;
+  min-width:0;
+}
+.schedule-entry-inline .check-line{width:100%;box-sizing:border-box}
+.schedule-entry-inline .check-line input{width:auto;max-width:none}
+.schedule-entry-inline .dialog-close{width:42px;max-width:42px;flex:0 0 42px}
+@media(max-width:520px){
+  .schedule-entry-inline{border-radius:18px}
+  .schedule-entry-inline form{padding:15px}
+  .schedule-entry-inline .grid{grid-template-columns:minmax(0,1fr)}
+}

@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#fbf7f7">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="우리 둘">
-  <title>우리 둘 V12</title>
+  <meta name="apple-mobile-web-app-title" content="가계부 확장ver">
+  <title>가계부 확장ver</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <div id="appSplash" class="app-splash" aria-hidden="true"><div class="app-splash-mark">♥</div><strong>가계부 확장ver</strong></div>
   <div id="toast" class="toast" hidden></div>
   <section id="profileScreen" class="profile-screen">
     <div class="profile-card">
@@ -69,14 +70,17 @@
         <details class="past-schedule-box"><summary>지난 일정 보기 <span id="pastScheduleCount"></span></summary><div id="pastScheduleList" class="list"></div></details>
       </section>
 
-      <article id="scheduleFormPanel" class="panel schedule-form-panel" hidden>
-        <div class="section-heading"><h2>일정 입력</h2><button id="closeScheduleForm" class="dialog-close" type="button" aria-label="닫기">×</button></div><input id="scheduleTitle" placeholder="일정 제목">
-        <div class="grid"><input id="scheduleStartDate" type="date"><input id="scheduleEndDate" type="date"></div>
-        <label class="check-line"><input id="scheduleAllDay" type="checkbox" checked> 하루 종일</label>
-        <div id="scheduleTimeRow" class="grid" hidden><input id="scheduleStartTime" type="time"><input id="scheduleEndTime" type="time"></div>
-        <select id="scheduleCategory"></select><input id="scheduleLocation" placeholder="장소 (선택)"><textarea id="scheduleMemo" rows="3" placeholder="메모 (선택)"></textarea>
-        <button id="addSchedule" class="primary-button">일정 저장</button>
-      </article>
+      <section id="scheduleFormPanel" class="schedule-form-panel schedule-entry-inline" hidden>
+        <form onsubmit="return false">
+          <div class="section-heading"><h2>일정 입력</h2><button id="closeScheduleForm" class="dialog-close" type="button" aria-label="닫기">×</button></div>
+          <input id="scheduleTitle" placeholder="일정 제목">
+          <div class="grid"><input id="scheduleStartDate" type="date"><input id="scheduleEndDate" type="date"></div>
+          <label class="check-line"><input id="scheduleAllDay" type="checkbox" checked> 하루 종일</label>
+          <div id="scheduleTimeRow" class="grid" hidden><input id="scheduleStartTime" type="time"><input id="scheduleEndTime" type="time"></div>
+          <select id="scheduleCategory"></select><input id="scheduleLocation" placeholder="장소 (선택)"><textarea id="scheduleMemo" rows="3" placeholder="메모 (선택)"></textarea>
+          <button id="addSchedule" class="primary-button" type="button">일정 저장</button>
+        </form>
+      </section>
     </section>
 
     <section id="moneyView" class="view">
