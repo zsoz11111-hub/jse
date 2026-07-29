@@ -256,3 +256,30 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
   .schedule-entry-inline form{padding:15px}
   .schedule-entry-inline .grid{grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* V15 iPhone date centering + schedule target */
+.schedule-entry-inline input[type="date"],
+.schedule-entry-inline input[type="time"]{
+  height:56px;
+  padding:0 16px;
+  line-height:56px;
+  text-align:center;
+}
+.schedule-entry-inline input[type="date"]::-webkit-date-and-time-value,
+.schedule-entry-inline input[type="time"]::-webkit-date-and-time-value{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100%;
+  margin:0;
+  text-align:center;
+}
+.schedule-entry-inline input[type="date"]::-webkit-datetime-edit,
+.schedule-entry-inline input[type="time"]::-webkit-datetime-edit{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+}
+#scheduleTarget{font-weight:700;color:#6f555a}
