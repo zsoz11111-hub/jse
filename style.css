@@ -286,3 +286,11 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .schedule-target-display{font-family:"Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-weight:800;color:#8b5962}
 .schedule-meta{display:flex;flex-wrap:wrap;align-items:center}
 .list-add-schedule{margin-top:0;margin-bottom:12px}
+
+/* V18 홈 바로가기와 일정 대상 표시 */
+.home-stat-link{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;-webkit-tap-highlight-color:transparent}
+.home-stat-link:active{transform:scale(.98)}
+.home-stat-link:focus-visible{outline:2px solid #a46874;outline-offset:2px}
+.schedule-target-display{display:inline !important;visibility:visible !important;white-space:nowrap;flex:0 0 auto}
+.schedule-meta{overflow:visible;white-space:normal}
+@media(max-width:430px){.schedule-meta{font-size:11px;line-height:1.5}.schedule-target-display{font-size:11px}}

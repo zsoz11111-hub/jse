@@ -29,8 +29,8 @@
     <section id="homeView" class="view active">
       <article class="welcome-card"><span>오늘도 함께</span><strong id="welcomeName"></strong><p>장보기, 여행, 일정과 가계부를 둘이서 공유하세요.</p></article>
       <div class="stats-grid">
-        <article><small>살 물건</small><b id="shoppingCount">0</b></article><article><small>예정 여행</small><b id="tripCount">0</b></article>
-        <article><small>다가오는 일정</small><b id="scheduleCount">0</b></article><article><small>이번 달 지출</small><b id="homeExpenseTotal">0원</b></article>
+        <article class="home-stat-link" data-go="shopping" role="button" tabindex="0"><small>살 물건</small><b id="shoppingCount">0</b></article><article class="home-stat-link" data-go="travel" role="button" tabindex="0"><small>예정 여행</small><b id="tripCount">0</b></article>
+        <article class="home-stat-link" data-go="schedule" role="button" tabindex="0"><small>다가오는 일정</small><b id="scheduleCount">0</b></article><article class="home-stat-link" data-go="money" role="button" tabindex="0"><small>이번 달 지출</small><b id="homeExpenseTotal">0원</b></article>
       </div>
       <section class="section-block"><div class="section-heading"><h2>다가오는 일정</h2><button class="text-button" data-go="schedule">전체 보기</button></div><div id="homeSchedules" class="list"></div></section>
       <section class="section-block"><div class="section-heading"><h2>다가오는 여행</h2><button class="text-button" data-go="travel">전체 보기</button></div><div id="homeTrips" class="list"></div></section>
