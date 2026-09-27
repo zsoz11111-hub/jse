@@ -296,3 +296,10 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .schedule-target-display{display:inline !important;visibility:visible !important;white-space:nowrap;flex:0 0 auto}
 .schedule-meta{overflow:visible;white-space:normal}
 @media(max-width:430px){.schedule-meta{font-size:11px;line-height:1.5}.schedule-target-display{font-size:11px}}
+
+/* V18 login + trash */
+.login-card input{margin-bottom:10px}
+.login-card .primary-button{margin-top:4px}
+.trash-list{max-height:60vh;overflow:auto;gap:8px}
+.trash-item{grid-template-columns:1fr auto}
+.trash-item .item-actions .small-button{color:#2f7d5b}
