@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">가계부 확장ver</string>
+    <string name="expense_short">지출 입력</string>
+    <string name="expense_long">빠른 지출 입력</string>
+</resources>
