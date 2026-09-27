@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@mipmap/ic_expense"
+        android:shortcutId="expense"
+        android:shortcutLongLabel="@string/expense_long"
+        android:shortcutShortLabel="@string/expense_short">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://zsoz11111-hub.github.io/jse/?quick=expense"
+            android:targetClass="kr.jse.app.MainActivity"
+            android:targetPackage="kr.jse.app" />
+    </shortcut>
+</shortcuts>
