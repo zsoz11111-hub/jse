@@ -14,7 +14,17 @@
 <body>
   <div id="appSplash" class="app-splash" aria-hidden="true"><div class="app-splash-mark">♥</div><strong>가계부 확장ver</strong></div>
   <div id="toast" class="toast" hidden></div>
-  <section id="profileScreen" class="profile-screen">
+  <section id="loginScreen" class="profile-screen" hidden>
+    <form class="profile-card login-card" onsubmit="return false">
+      <div class="heart">♥</div><p class="eyebrow">OUR PRIVATE SPACE</p><h1>로그인</h1>
+      <p>둘이 함께 쓰는 계정으로 한 번만 로그인하면 계속 유지됩니다.</p>
+      <input id="loginEmail" type="email" autocomplete="username" placeholder="이메일">
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="비밀번호">
+      <button id="loginButton" class="primary-button" type="submit">로그인</button>
+    </form>
+  </section>
+
+  <section id="profileScreen" class="profile-screen" hidden>
     <div class="profile-card">
       <div class="heart">♥</div><p class="eyebrow">OUR PRIVATE SPACE</p><h1>누구인가요?</h1>
       <p>한 번 선택하면 다음부터 바로 앱이 열립니다.</p>
@@ -109,7 +119,9 @@
 
     <section id="settingsView" class="view">
       <article class="panel"><h2>두 사람 설정</h2><label>첫 번째 이름<input id="partnerOneInput"></label><label>두 번째 이름<input id="partnerTwoInput"></label><button id="saveSettings" class="primary-button">설정 저장</button></article>
-      <article class="panel"><h2>이 기기 설정</h2><p id="currentProfileText"></p><button id="changeProfile" class="secondary-button">이 기기 사용자 변경</button></article>
+      <article class="panel"><h2>휴지통</h2><p class="help-text">삭제한 항목은 30일 동안 보관되고, 여기서 복구할 수 있습니다.</p><button id="openTrash" class="secondary-button">휴지통 열기</button></article>
+      <article class="panel"><h2>백업</h2><p class="help-text">한 달에 한 번 정도 받아서 구글 드라이브 등에 보관하세요.</p><button id="backupJson" class="secondary-button">전체 데이터 백업 (JSON)</button><button id="backupCsv" class="secondary-button">가계부 엑셀 파일 (CSV)</button></article>
+      <article class="panel"><h2>이 기기 설정</h2><p id="currentProfileText"></p><button id="changeProfile" class="secondary-button">이 기기 사용자 변경</button><button id="logoutButton" class="secondary-button">로그아웃</button></article>
     </section>
 
     <nav class="bottom-nav">
@@ -121,6 +133,8 @@
 
   <dialog id="categoryDialog" class="category-dialog"><form method="dialog"><div class="section-heading"><h2 id="categoryDialogTitle">카테고리 관리</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><div id="categoryManageList" class="category-manage-list"></div><div class="category-add-row"><input id="newCategoryName" placeholder="새 카테고리 이름"><button id="addCategoryButton" type="button" class="primary-button">추가</button></div><p class="help-text">사용 중인 카테고리를 삭제하면 해당 항목은 ‘미분류’로 이동합니다.</p></form></dialog>
 
+
+  <dialog id="trashDialog" class="category-dialog"><form onsubmit="return false"><div class="section-heading"><h2>휴지통</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><div id="trashList" class="list trash-list"></div><p class="help-text">30일이 지난 항목은 자동으로 완전히 삭제됩니다.</p></form></dialog>
 
   <dialog id="calendarDialog" class="category-dialog"><form onsubmit="return false"><div class="section-heading"><h2>캘린더에 추가</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><p class="help-text calendar-help">갤럭시는 ‘휴대폰 캘린더로 보내기’를 누른 뒤 공유 목록에서 삼성 캘린더를 선택하세요. Google 캘린더는 등록 화면이 바로 열립니다.</p><div class="calendar-choice-actions"><button id="shareDeviceCalendar" type="button" class="primary-button">휴대폰 캘린더로 보내기</button><button id="openGoogleCalendar" type="button" class="secondary-button">Google 캘린더로 열기</button></div></form></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script src="./app.js"></script>
