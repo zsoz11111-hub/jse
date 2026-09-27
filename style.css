@@ -62,11 +62,13 @@ label{display:grid;gap:6px;margin:12px 0;color:#6f6264;font-size:14px;font-weigh
 .edit-form-fields input,.edit-form-fields select,.edit-form-fields textarea{margin-top:6px}
 .edit-check-line{display:flex!important;grid-template-columns:none!important;align-items:center;gap:9px;margin:10px 0!important}
 .edit-check-line input{width:20px;height:20px;margin:0!important}
-.edit-dialog-actions{display:grid;grid-template-columns:1fr 1.5fr;gap:9px;margin-top:16px}
+.edit-dialog-actions{display:grid;grid-template-columns:.8fr 1fr 1.5fr;gap:9px;margin-top:16px}
 .edit-dialog-actions .secondary-button,.edit-dialog-actions .primary-button{margin:0}
+.danger-button{margin:0;border:1px solid #f0c9cf;border-radius:14px;background:#fff5f6;color:#c9485b;font-weight:700;padding:12px 10px}
+.calendar-day-event-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
 .item-actions .small-button,.card-actions .small-button{height:auto;min-height:34px;padding:7px 10px;border:0;background:transparent;color:#94606a;font-size:12px;border-radius:8px}
 .item-actions .small-button:hover,.card-actions .small-button:hover{background:#f6edef}
-@media(max-width:420px){.edit-dialog-actions{grid-template-columns:1fr}.edit-dialog-actions .secondary-button{order:2}}
+@media(max-width:420px){.edit-dialog-actions{grid-template-columns:1fr}.edit-dialog-actions .secondary-button{order:2}.edit-dialog-actions .danger-button{order:3}}
 
 /* V10 filters and dialog fixes */
 .filter-bar{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:8px;margin:10px 0 14px}.filter-bar input,.filter-bar select{margin:0}.money-filter-bar{grid-template-columns:minmax(0,1fr) 120px 150px}.dialog-close{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;font-size:25px;line-height:1;cursor:pointer}.dialog-close:hover{background:#f6ecee}.calendar-choice-actions{display:grid;gap:10px;margin-top:18px}.calendar-choice-actions button{margin:0}.calendar-help{font-size:14px}.edit-dialog[open],.category-dialog[open]{animation:dialogIn .16s ease-out}@keyframes dialogIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
