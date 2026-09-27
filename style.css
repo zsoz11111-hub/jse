@@ -303,3 +303,5 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .trash-list{max-height:60vh;overflow:auto;gap:8px}
 .trash-item{grid-template-columns:1fr auto}
 .trash-item .item-actions .small-button{color:#2f7d5b}
+.calendar-day-event-actions{flex-wrap:wrap}
+.calendar-day-event-actions .calendar-button{margin-right:auto}
