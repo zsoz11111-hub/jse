@@ -1,8 +1,10 @@
 package kr.jse.app;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,7 +27,11 @@ public class MainActivity extends Activity {
     static final String QUICK_EXPENSE = HOME + "?quick=expense";
     static final String SUPABASE_HOST = "qrcfwedbmlsrhgmgwqya.supabase.co";
 
+    static final int CALENDAR_PERMISSION_REQUEST = 1;
+
     private WebView web;
+    private String pendingCalendarJson;
+    private boolean calendarPermissionAsked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +97,46 @@ public class MainActivity extends Activity {
                 });
     }
 
+    private boolean hasCalendarPermission() {
+        return checkSelfPermission(Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private synchronized void runCalendarSync() {
+        String json = pendingCalendarJson;
+        pendingCalendarJson = null;
+        if (json == null) return;
+        new Thread(() -> CalendarSync.sync(this, json)).start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != CALENDAR_PERMISSION_REQUEST) return;
+        if (hasCalendarPermission()) {
+            runCalendarSync();
+            Toast.makeText(this, "앱 일정이 폰 캘린더 '가계부 일정'에 자동으로 등록됩니다.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "캘린더 권한이 없어 일정 자동 등록을 할 수 없습니다.", Toast.LENGTH_LONG).show();
+        }
+    }
+
     class Bridge {
+        /** 앱의 전체 일정 목록(JSON)을 받아 폰 캘린더와 맞춥니다. */
+        @JavascriptInterface
+        public void syncCalendar(String json) {
+            synchronized (MainActivity.this) {
+                pendingCalendarJson = json;
+            }
+            runOnUiThread(() -> {
+                if (hasCalendarPermission()) runCalendarSync();
+                else if (!calendarPermissionAsked) {
+                    calendarPermissionAsked = true;
+                    requestPermissions(new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR}, CALENDAR_PERMISSION_REQUEST);
+                }
+            });
+        }
+
         @JavascriptInterface
         public void addCalendarEvent(String title, long begin, long end, boolean allDay, String location, String description) {
             Intent i = new Intent(Intent.ACTION_INSERT)
