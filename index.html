@@ -105,7 +105,7 @@
       <section id="moneyListSection">
         <article class="money-summary-card"><span>이번 달 지출</span><strong id="monthExpenseTotal">0원</strong><small id="monthExpenseCount">0건</small></article>
         <article class="panel quick-money-panel"><div class="section-heading"><h2>지출 입력</h2><button id="openQuickMoney" class="text-button">빠른 입력</button></div><div class="amount-input-wrap"><input id="moneyAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="0"><span>원</span></div><input id="moneyContent" placeholder="사용한 곳 또는 내용"><div class="grid"><select id="moneyCategory"></select><select id="moneyWriter"></select></div><input id="moneyDate" type="date"><button id="addMoney" class="primary-button">지출 저장</button></article>
-        <section class="section-block"><div class="section-heading"><h2>지출 내역</h2></div><div class="filter-bar money-filter-bar"><input id="moneySearch" placeholder="사용처 검색"><select id="moneyPeriodFilter"><option value="thisMonth">이번 달</option><option value="lastMonth">지난달</option><option value="all">전체</option></select><select id="moneyCategoryFilter"><option value="all">전체 카테고리</option></select></div><div id="moneyList" class="list"></div></section>
+        <section class="section-block"><div class="section-heading"><h2>지출 내역</h2><small class="help-text">눌러서 수정·삭제</small></div><div id="moneyMonthNav" class="calendar-header money-month-nav"><button id="moneyListPrev" type="button" aria-label="이전 달">‹</button><h2 id="moneyListMonthTitle"></h2><button id="moneyListNext" type="button" aria-label="다음 달">›</button></div><div id="moneyListSummary" class="money-list-summary"></div><div class="filter-bar money-filter-bar"><input id="moneySearch" placeholder="사용처 검색"><select id="moneyPeriodFilter"><option value="month">월별 보기</option><option value="all">전체 기간</option></select><select id="moneyCategoryFilter"><option value="all">전체 카테고리</option></select></div><div id="moneyList" class="list money-day-list"></div></section>
       </section>
       <section id="moneySummarySection" hidden>
         <article class="monthly-summary-panel">
@@ -114,6 +114,7 @@
         </article>
         <section class="section-block"><div class="section-heading"><h2>카테고리별 지출</h2></div><div id="moneyCategorySummary" class="summary-list"></div></section>
         <section class="section-block"><div class="section-heading"><h2>사람별 지출</h2></div><div id="moneyWriterSummary" class="summary-list"></div></section>
+        <section class="section-block"><div class="section-heading"><h2>이 달 지출 내역</h2><small class="help-text">눌러서 수정·삭제</small></div><div id="moneySummaryList"></div></section>
       </section>
     </section>
 
