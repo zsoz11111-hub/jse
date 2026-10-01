@@ -305,3 +305,39 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .trash-item .item-actions .small-button{color:#2f7d5b}
 .calendar-day-event-actions{flex-wrap:wrap}
 .calendar-day-event-actions .calendar-button{margin-right:auto}
+/* V24 월별·날짜별 지출 내역 */
+.money-month-nav{margin:2px 0 8px}
+.money-list-summary{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 2px 12px;padding:14px 16px;border-radius:17px;background:#f6edef;color:#5f454b}
+.money-list-summary strong{font-size:18px}
+.money-list-summary span{font-size:12px;color:#8d7579;text-align:right}
+.money-day-list{gap:14px}
+.money-day-group{display:grid;gap:6px}
+.money-day-header,.money-month-header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 4px}
+.money-day-header strong{font-size:14px;color:#4c3c40}
+.money-day-header span{font-size:12px;font-weight:700;color:#94606a}
+.money-day-header.today strong::after{content:' 오늘';margin-left:4px;padding:2px 6px;border-radius:8px;background:#94606a;color:#fff;font-size:10px;vertical-align:middle}
+.money-month-header{margin-top:6px;padding:10px 12px;border-radius:14px;background:#60474e;color:#fff}
+.money-month-header strong{font-size:15px}
+.money-month-header span{font-size:12px;font-weight:700;opacity:.9}
+.money-day-group{gap:0;border:1px solid #eee1e3;border-radius:17px;background:#fff;overflow:hidden}
+.money-day-group .money-day-header{padding:10px 14px;background:#fbf6f7;border-bottom:1px solid #f1e6e8}
+.money-day-group .money-row{padding:9px 14px;border:0;border-bottom:1px solid #f4ecee;border-radius:0}
+.money-day-group .money-row:last-child{border-bottom:0}
+.money-day-group .money-row .meta{margin-top:2px}
+.money-day-group .money-row .item-actions{margin-top:0;gap:2px}
+.money-day-group .money-row .item-actions .small-button{min-height:26px;padding:3px 7px}
+.money-day-group .money-row .delete-button{padding:3px 4px}
+.filter-bar.money-filter-bar{grid-template-columns:1fr 1fr}
+.filter-bar.money-filter-bar #moneySearch{grid-column:1/-1}
+.money-flat-list{border:1px solid #eee1e3;border-radius:17px;background:#fff;overflow:hidden}
+.money-flat-row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:10px 14px;border:0;border-bottom:1px solid #f4ecee;background:transparent;text-align:left;color:inherit}
+.money-flat-row:last-child{border-bottom:0}
+.money-flat-row:active{background:#fbf6f7}
+.money-flat-date{font-size:12px;font-weight:700;color:#94606a}
+.money-flat-body{min-width:0}
+.money-flat-body strong{display:block;overflow:hidden;font-size:14px;white-space:nowrap;text-overflow:ellipsis}
+.money-flat-body small{display:block;margin-top:2px;font-size:11px;color:#9b8f91}
+.money-flat-amount{font-weight:800;color:#7d4f58;white-space:nowrap}
+.money-row-tap{width:100%;font:inherit;text-align:left;color:inherit;cursor:pointer}
+.money-day-group .money-row-tap{padding:11px 14px}
+.money-row-tap:active{background:#fbf6f7}
