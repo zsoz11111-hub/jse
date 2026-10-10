@@ -341,3 +341,13 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .money-row-tap{width:100%;font:inherit;text-align:left;color:inherit;cursor:pointer}
 .money-day-group .money-row-tap{padding:11px 14px}
 .money-row-tap:active{background:#fbf6f7}
+/* V25 결제 알림 자동 인식 */
+.auto-pay-panel{border:1px solid #e9c9cf;background:#fffafb}
+.auto-pay-list{display:grid;gap:10px}
+.auto-pay-item{display:grid;gap:8px;padding:12px;border:1px solid #eee1e3;border-radius:15px;background:#fff}
+.auto-pay-source{font-size:12px;font-weight:800;color:#94606a}
+.auto-pay-raw{font-size:12px;line-height:1.45;color:#8d7f82;word-break:keep-all}
+.auto-pay-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.auto-pay-fields input,.auto-pay-fields select{margin:0;min-height:40px;font-size:14px}
+.auto-pay-actions{display:grid;grid-template-columns:1fr 1.6fr;gap:8px}
+.auto-pay-actions button{margin:0;min-height:40px}
