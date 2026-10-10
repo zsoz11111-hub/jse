@@ -12,6 +12,11 @@ on:
 permissions:
   contents: write
 
+# 빌드가 겹치면 서명 키가 두 번 만들어질 수 있어 하나씩 실행합니다.
+concurrency:
+  group: android-apk
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,10 +33,21 @@ jobs:
           gradle-version: "8.9"
 
       # 같은 서명 키를 계속 써야 앱을 지우지 않고 업데이트할 수 있습니다.
-      - uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: jse-debug-keystore
+      # 키가 아직 없으면 한 번만 만들어 저장소에 넣고, 이후에는 그 키를 꺼내 씁니다.
+      - name: Signing key
+        run: |
+          if [ ! -f android/signing/jse.keystore.b64 ]; then
+            mkdir -p android/signing
+            keytool -genkeypair -keystore /tmp/jse.keystore -storepass jse-app-2026 -keypass jse-app-2026 \
+              -alias jse -keyalg RSA -keysize 2048 -validity 36500 -dname "CN=jse, O=jse, C=KR"
+            base64 -w0 /tmp/jse.keystore > android/signing/jse.keystore.b64
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add android/signing/jse.keystore.b64
+            git commit -m "앱 서명 키 고정"
+            git push
+          fi
+          base64 -d android/signing/jse.keystore.b64 > android/app/jse.keystore
 
       - name: App icon
         run: |
