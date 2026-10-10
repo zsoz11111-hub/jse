@@ -5,6 +5,14 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
+    <!-- 결제 알림을 보낸 앱의 이름(예: 카카오뱅크)을 화면에 보여주기 위해 홈 화면 앱들만 조회합니다 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
