@@ -2,6 +2,8 @@ package kr.jse.app;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.CalendarContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -122,6 +125,37 @@ public class MainActivity extends Activity {
     }
 
     class Bridge {
+        /** 결제 알림 읽기 권한이 켜져 있는지 */
+        @JavascriptInterface
+        public boolean hasPaymentAccess() {
+            NotificationManager nm = getSystemService(NotificationManager.class);
+            return nm != null && nm.isNotificationListenerAccessGranted(new ComponentName(MainActivity.this, PaymentListener.class));
+        }
+
+        /** 알림 접근 허용 설정 화면을 엽니다. */
+        @JavascriptInterface
+        public void openPaymentAccessSettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "설정 화면을 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        /** 검토 대기 중인 결제 알림 목록(JSON) */
+        @JavascriptInterface
+        public String getPendingPayments() {
+            return PaymentStore.pendingJson(MainActivity.this);
+        }
+
+        /** 저장했거나 무시한 항목을 검토 대기 목록에서 지웁니다. */
+        @JavascriptInterface
+        public void removePendingPayments(String idsJson) {
+            PaymentStore.remove(MainActivity.this, idsJson);
+        }
+
         /** 앱의 전체 일정 목록(JSON)을 받아 폰 캘린더와 맞춥니다. */
         @JavascriptInterface
         public void syncCalendar(String json) {
