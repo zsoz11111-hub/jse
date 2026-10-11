@@ -10,8 +10,8 @@ android {
         applicationId = "kr.jse.app"
         minSdk = 29
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.4"
+        versionCode = 6
+        versionName = "1.5"
     }
 
     // 업데이트가 덮어쓰기로 설치되도록 항상 같은 서명 키를 씁니다 (키는 워크플로가 android/signing 에서 꺼내 둡니다)
