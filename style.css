@@ -351,3 +351,16 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .auto-pay-fields input,.auto-pay-fields select{margin:0;min-height:40px;font-size:14px}
 .auto-pay-actions{display:grid;grid-template-columns:1fr 1.6fr;gap:8px}
 .auto-pay-actions button{margin:0;min-height:40px}
+/* V26 일정 검색 + 오늘 버튼 */
+.schedule-search-wrap{position:relative;flex:1 1 100%;min-width:0}
+.schedule-search-wrap input{width:100%;margin:0;height:42px;padding:0 14px;border-radius:14px;font-size:14px}
+.schedule-search-results{position:absolute;left:0;right:0;top:46px;z-index:30;max-height:55vh;overflow:auto;border:1px solid #eadbdd;border-radius:14px;background:#fff;box-shadow:0 14px 36px rgba(80,45,51,.16)}
+.schedule-search-results .empty{padding:14px}
+.schedule-search-item{display:block;width:100%;padding:10px 14px;border:0;border-bottom:1px solid #f4ecee;background:transparent;text-align:left;color:inherit;font:inherit}
+.schedule-search-item:last-child{border-bottom:0}
+.schedule-search-item:active{background:#fbf6f7}
+.schedule-search-item strong{display:block;font-size:14px}
+.schedule-search-item small{display:block;margin-top:2px;font-size:11px;color:#9b8f91}
+.schedule-search-item.past{opacity:.6}
+.calendar-today-row{display:flex;justify-content:flex-end;margin:0 0 4px}
+.calendar-today-button{height:32px;padding:0 14px;border:1px solid #eadbdd;border-radius:16px;background:#fff;color:#94606a;font-size:13px;font-weight:800}
