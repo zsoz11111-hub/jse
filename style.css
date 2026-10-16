@@ -364,3 +364,10 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .schedule-search-item.past{opacity:.6}
 .calendar-today-row{display:flex;justify-content:flex-end;margin:0 0 4px}
 .calendar-today-button{height:32px;padding:0 14px;border:1px solid #eadbdd;border-radius:16px;background:#fff;color:#94606a;font-size:13px;font-weight:800}
+/* V27 일정 툴바 한 줄: 달력식·리스트식 / 카테고리 관리 / 오늘, 아래 줄 검색 */
+.schedule-view-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.schedule-view-toolbar .view-toggle{flex:1 1 auto;width:auto;max-width:210px;min-width:0}
+.schedule-view-toolbar .view-toggle button{height:38px;padding:0 6px;font-size:13px}
+.schedule-view-toolbar .text-button{width:auto;margin:0 0 0 auto;padding:8px 4px;text-align:right;font-size:13px;white-space:nowrap}
+.schedule-view-toolbar .calendar-today-button{flex:0 0 auto;height:38px;padding:0 12px}
+.schedule-view-toolbar .schedule-search-wrap{flex:1 1 100%;order:5}
