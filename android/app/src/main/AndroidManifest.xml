@@ -30,6 +30,15 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- 주차 NFC 스티커를 태그하면 브라우저 대신 이 앱이 바로 열립니다 -->
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="zsoz11111-hub.github.io"
+                    android:pathPrefix="/jse/"
+                    android:scheme="https" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
