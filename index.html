@@ -128,8 +128,13 @@
       <article class="panel"><h2>이 기기 설정</h2><p id="currentProfileText"></p><button id="changeProfile" class="secondary-button">이 기기 사용자 변경</button><button id="logoutButton" class="secondary-button">로그아웃</button></article>
     </section>
 
+    <section id="parkingView" class="view">
+      <div id="parkingCars" class="parking-cars"></div>
+      <section class="section-block"><div class="section-heading"><h2>최근 기록</h2></div><div id="parkingHistory" class="parking-history"></div></section>
+    </section>
+
     <nav class="bottom-nav">
-      <button class="nav-button active" data-view="home"><span>⌂</span><small>홈</small></button><button class="nav-button" data-view="shopping"><span>☑</span><small>장보기</small></button><button class="nav-button" data-view="travel"><span>✈</span><small>여행</small></button><button class="nav-button" data-view="schedule"><span>▣</span><small>일정</small></button><button class="nav-button" data-view="money"><span>₩</span><small>가계부</small></button><button class="nav-button" data-view="settings"><span>⚙</span><small>설정</small></button>
+      <button class="nav-button active" data-view="home"><span>⌂</span><small>홈</small></button><button class="nav-button" data-view="shopping"><span>☑</span><small>장보기</small></button><button class="nav-button" data-view="travel"><span>✈</span><small>여행</small></button><button class="nav-button" data-view="schedule"><span>▣</span><small>일정</small></button><button class="nav-button" data-view="money"><span>₩</span><small>가계부</small></button><button class="nav-button" data-view="settings"><span>⚙</span><small>설정</small></button><button class="nav-button" data-view="parking"><span>P</span><small>주차</small></button>
     </nav>
   </main>
 
@@ -139,6 +144,8 @@
 
 
   <dialog id="trashDialog" class="category-dialog"><form onsubmit="return false"><div class="section-heading"><h2>휴지통</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><div id="trashList" class="list trash-list"></div><p class="help-text">30일이 지난 항목은 자동으로 완전히 삭제됩니다.</p></form></dialog>
+
+  <dialog id="parkingDialog" class="category-dialog"><form onsubmit="return false"><div class="section-heading"><h2 id="parkingDialogTitle">주차 기록</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><p class="help-text">어떤 차를 주차했나요?</p><div id="parkingDialogCars" class="parking-dialog-cars"></div></form></dialog>
 
   <dialog id="calendarDialog" class="category-dialog"><form onsubmit="return false"><div class="section-heading"><h2>캘린더에 추가</h2><button type="button" class="dialog-close" data-close-dialog>×</button></div><p class="help-text calendar-help">갤럭시는 ‘휴대폰 캘린더로 보내기’를 누른 뒤 공유 목록에서 삼성 캘린더를 선택하세요. Google 캘린더는 등록 화면이 바로 열립니다.</p><div class="calendar-choice-actions"><button id="shareDeviceCalendar" type="button" class="primary-button">휴대폰 캘린더로 보내기</button><button id="openGoogleCalendar" type="button" class="secondary-button">Google 캘린더로 열기</button></div></form></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./config.js"></script><script src="./app.js"></script>
