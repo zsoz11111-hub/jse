@@ -62,8 +62,18 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (savedInstanceState != null) web.restoreState(savedInstanceState);
+        String parking = parkingUrl(getIntent());
+        if (parking != null) web.loadUrl(parking);
+        else if (savedInstanceState != null) web.restoreState(savedInstanceState);
         else web.loadUrl(isQuickExpense(getIntent()) ? QUICK_EXPENSE : HOME);
+    }
+
+    /** 주차 NFC 스티커로 열렸으면 그 주소를 돌려줍니다. 최근 앱 목록에서 다시 열 때는 다시 기록하지 않습니다. */
+    private String parkingUrl(Intent i) {
+        if (i == null || i.getData() == null) return null;
+        if ((i.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) return null;
+        String url = i.getData().toString();
+        return url.startsWith(HOME) && i.getData().getQueryParameter("parking") != null ? url : null;
     }
 
     private boolean isQuickExpense(Intent i) {
@@ -76,7 +86,10 @@ public class MainActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if (isQuickExpense(intent)) {
+        String parking = parkingUrl(intent);
+        if (parking != null) {
+            web.loadUrl(parking);
+        } else if (isQuickExpense(intent)) {
             web.evaluateJavascript("typeof openQuickMoney==='function'&&!document.querySelector('#app').hidden&&openQuickMoney()", null);
         }
     }
