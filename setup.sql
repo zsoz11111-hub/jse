@@ -80,6 +80,15 @@ create table if not exists public.expense_categories(
   created_at timestamptz default now()
 );
 
+create table if not exists public.parking_records(
+  id bigint generated always as identity primary key,
+  car text not null,
+  floor text not null,
+  source text not null default '직접',
+  writer text,
+  recorded_at timestamptz not null default now()
+);
+
 -- 2) 기본 데이터 ------------------------------------------------------------
 insert into public.couple_settings(id,partner_one,partner_two) values(1,'진성','성은')
 on conflict(id) do nothing;
@@ -96,7 +105,7 @@ on conflict(name) do nothing;
 do $$
 declare t text; p record;
 begin
-  foreach t in array array['couple_items','shopping_items','travel_plans','schedule_events','couple_settings','schedule_categories','expense_categories']
+  foreach t in array array['couple_items','shopping_items','travel_plans','schedule_events','couple_settings','schedule_categories','expense_categories','parking_records']
   loop
     execute format('alter table public.%I enable row level security',t);
     for p in select policyname from pg_policies where schemaname='public' and tablename=t loop
@@ -114,7 +123,7 @@ grant usage, select on all sequences in schema public to authenticated;
 do $$
 declare t text;
 begin
-  foreach t in array array['couple_items','shopping_items','travel_plans','schedule_events','couple_settings','schedule_categories','expense_categories']
+  foreach t in array array['couple_items','shopping_items','travel_plans','schedule_events','couple_settings','schedule_categories','expense_categories','parking_records']
   loop
     begin
       execute format('alter publication supabase_realtime add table public.%I',t);
