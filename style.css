@@ -371,3 +371,21 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .schedule-view-toolbar .text-button{width:auto;margin:0 0 0 auto;padding:8px 4px;text-align:right;font-size:13px;white-space:nowrap}
 .schedule-view-toolbar .calendar-today-button{flex:0 0 auto;height:38px;padding:0 12px}
 .schedule-view-toolbar .schedule-search-wrap{flex:1 1 100%;order:5}
+/* V28 주차 위치 */
+.bottom-nav{grid-template-columns:repeat(7,1fr)}
+.parking-cars{display:grid;gap:12px}
+.parking-card{padding:16px;border:1px solid #eee1e3;border-radius:20px;background:#fff}
+.parking-card-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.parking-card-top strong{font-size:20px}
+.parking-floor{font-size:22px;font-weight:800;color:#94606a;white-space:nowrap}
+.parking-when{margin-top:6px}
+.parking-floor-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.parking-floor-button{min-height:46px;border:1px solid #dec8cc;border-radius:13px;background:#fff;color:#895a62;font-weight:800}
+.parking-floor-button.active{border-color:#94606a;background:#94606a;color:#fff}
+.parking-history{border:1px solid #eee1e3;border-radius:17px;background:#fff;overflow:hidden}
+.parking-history>.empty{padding:16px}
+.parking-history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:1px solid #f4ecee}
+.parking-history-row:last-child{border-bottom:0}
+.parking-history-row .meta{margin-top:2px}
+.parking-dialog-cars{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.parking-dialog-cars .primary-button{margin:0}
