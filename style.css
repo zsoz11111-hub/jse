@@ -396,3 +396,23 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .auto-pay-ignored-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px;border:1px solid #eee1e3;border-radius:12px;background:#fff}
 .auto-pay-ignored-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .auto-pay-ignored-actions button{margin:0;min-height:40px}
+
+/* V30 화면 꾸미기: 배경색 테마와 아래 메뉴 순서 */
+html[data-theme="sky"] body{background:linear-gradient(180deg,#eaf4fd 0%,#f5f9fd 45%,#fff 100%)}
+html[data-theme="mint"] body{background:linear-gradient(180deg,#e8f7f1 0%,#f4faf7 45%,#fff 100%)}
+html[data-theme="lavender"] body{background:linear-gradient(180deg,#f1edfb 0%,#f8f6fc 45%,#fff 100%)}
+html[data-theme="cream"] body{background:linear-gradient(180deg,#fbf5e6 0%,#fcf9f1 45%,#fff 100%)}
+html[data-theme="gray"] body{background:linear-gradient(180deg,#f0f0f2 0%,#f6f6f7 45%,#fff 100%)}
+html[data-theme="white"] body{background:#fff}
+.look-title{margin:16px 0 8px;font-size:14px;color:#6f6265}
+.theme-choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.theme-swatch{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border:1px solid #eadbdd;border-radius:14px;background:#fff;color:#4a4042}
+.theme-swatch span{width:34px;height:34px;border-radius:50%;border:1px solid #d9cfd1}
+.theme-swatch small{font-size:11px}
+.theme-swatch.active{border-color:#94606a;box-shadow:0 0 0 2px #94606a inset}
+.nav-order-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.nav-order-row{display:grid;grid-template-columns:32px 1fr 44px 44px;align-items:center;gap:6px;padding:6px 8px;border:1px solid #eadbdd;border-radius:12px;background:#fff}
+.nav-order-icon{text-align:center;font-size:18px}
+.nav-order-name{font-weight:700}
+.nav-order-btn{height:36px;border:1px solid #eadbdd;border-radius:10px;background:#faf5f6;color:#80555d;font-size:14px}
+.nav-order-btn:disabled{opacity:.3}
