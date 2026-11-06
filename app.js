@@ -15,13 +15,22 @@ function ymdCompact(v){return (v||iso()).replaceAll("-","")}
 function dtCompact(date,time){return `${ymdCompact(date)}T${(time||"09:00").replace(":","")}00`}
 
 async function loadAll(){
-  const qs=await Promise.all([
-    sb.from("couple_settings").select("*").eq("id",1).maybeSingle(),sb.from("shopping_items").select("*").is("deleted_at",null).order("created_at",{ascending:false}),sb.from("travel_plans").select("*").is("deleted_at",null).order("start_date",{ascending:true}),sb.from("couple_items").select("*").is("deleted_at",null).order("created_at",{ascending:false}),sb.from("schedule_events").select("*").is("deleted_at",null).order("start_date",{ascending:true}),sb.from("schedule_categories").select("*").order("sort_order"),sb.from("expense_categories").select("*").order("sort_order"),sb.from("parking_records").select("*").order("recorded_at",{ascending:false}).limit(100)
-  ]);state.parking=qs[7].data||[];
-  if(qs[0].data)state.settings={...state.settings,...qs[0].data};state.shopping=qs[1].data||[];state.trips=qs[2].data||[];state.records=qs[3].data||[];state.schedules=qs[4].data||[];state.scheduleCategories=qs[5].data||[];state.expenseCategories=qs[6].data||[];
-  if(qs.some(q=>q.error))toast("일부 데이터를 불러오지 못했습니다. setup.sql 실행 여부를 확인하세요.");renderAll();
-  if(!qs.some(q=>q.error))syncDeviceCalendar();
+  // 지하 주차장처럼 연결이 불안정하거나, 앱을 오래 켜두어 로그인 토큰이 막 만료된 순간에는 일부 요청이 실패할 수 있어 한 번 더 시도합니다.
+  let qs=await fetchAllTables();
+  if(qs.some(q=>q.error)){if(qs.some(q=>q.status===401||/jwt|token/i.test(q.error?.message||"")))await sb.auth.refreshSession().catch(()=>{});await new Promise(r=>setTimeout(r,1500));qs=await fetchAllTables()}
+  const keep=(i,cur)=>qs[i].error?cur:(qs[i].data||[]);
+  if(qs[0].data)state.settings={...state.settings,...qs[0].data};state.shopping=keep(1,state.shopping);state.trips=keep(2,state.trips);state.records=keep(3,state.records);state.schedules=keep(4,state.schedules);state.scheduleCategories=keep(5,state.scheduleCategories);state.expenseCategories=keep(6,state.expenseCategories);state.parking=keep(7,state.parking||[]);
+  const failed=qs.some(q=>q.error);
+  if(failed){clearTimeout(state.loadRetryTimer);state.loadRetryTimer=setTimeout(loadAll,15000);if(!state.loadFailNotified){state.loadFailNotified=true;toast("인터넷 연결이 불안정해 일부 내용을 새로 불러오지 못했어요. 잠시 후 자동으로 다시 불러올게요.")}}
+  else state.loadFailNotified=false;
+  renderAll();
+  if(!failed)syncDeviceCalendar();
   checkPendingPayments();
+}
+function fetchAllTables(){
+  return Promise.all([
+    sb.from("couple_settings").select("*").eq("id",1).maybeSingle(),sb.from("shopping_items").select("*").is("deleted_at",null).order("created_at",{ascending:false}),sb.from("travel_plans").select("*").is("deleted_at",null).order("start_date",{ascending:true}),sb.from("couple_items").select("*").is("deleted_at",null).order("created_at",{ascending:false}),sb.from("schedule_events").select("*").is("deleted_at",null).order("start_date",{ascending:true}),sb.from("schedule_categories").select("*").order("sort_order"),sb.from("expense_categories").select("*").order("sort_order"),sb.from("parking_records").select("*").order("recorded_at",{ascending:false}).limit(100)
+  ]);
 }
 function autoCalendarSync(){return !!(window.AndroidBridge&&typeof AndroidBridge.syncCalendar==="function")}
 function syncDeviceCalendar(){if(!autoCalendarSync())return;const items=unifiedSchedules().map(x=>{const [begin,end,allDay]=calendarMillis(x);return {key:`${x.source}-${x.id}`,title:x.title||"일정",begin,end,allDay,location:x.location||"",description:x.memo||""}});AndroidBridge.syncCalendar(JSON.stringify(items))}
@@ -220,24 +229,26 @@ async function addMoney(){const amount=Number($("#moneyAmount").value),content=$
 function payBridge(){return !!(window.AndroidBridge&&typeof AndroidBridge.getPendingPayments==="function")}
 const CATEGORY_HINTS=[["식비",/카페|커피|스타벅스|투썸|이디야|메가|빽다방|배달|요기요|쿠팡이츠|식당|김밥|맥도날드|버거|롯데리아|치킨|피자|베이커리|파리바게뜨|뚜레쥬르|GS25|CU|세븐일레븐|이마트24|편의점|국밥/i],["교통",/택시|카카오T|모빌리티|주유|에너지|칼텍스|S-OIL|오일|버스|지하철|코레일|SRT|티머니|하이패스|주차/i],["쇼핑",/쿠팡|무신사|올리브영|다이소|11번가|G마켓|옥션|지그재그|에이블리|29CM|스마트스토어/i],["생활용품",/이마트|홈플러스|롯데마트|코스트코|트레이더스|노브랜드/i],["의료",/약국|병원|의원|치과/i],["주거",/관리비|전기요금|가스|수도|월세/i]];
 function guessExpenseCategory(text){const names=state.expenseCategories.map(c=>c.name);for(const [n,re] of CATEGORY_HINTS)if(re.test(text)&&names.includes(n))return n;return names.includes("미분류")?"미분류":(names[0]||"미분류")}
+function ignoredPayments(){try{return typeof AndroidBridge.getIgnoredPayments==="function"?JSON.parse(AndroidBridge.getIgnoredPayments()).sort((a,b)=>b.time-a.time):[]}catch(e){return []}}
 function pendingPayments(){try{return JSON.parse(AndroidBridge.getPendingPayments()).sort((a,b)=>b.time-a.time)}catch(e){return []}}
 function renderAutoPay(force){
   const panel=$("#autoPayPanel");if(!panel)return;if(!payBridge()){panel.hidden=true;return}
-  const access=AndroidBridge.hasPaymentAccess(),items=access?pendingPayments():[],sig=`${access}|${items.map(x=>x.id).join(",")}|${state.expenseCategories.length}`;
+  const access=AndroidBridge.hasPaymentAccess(),items=access?pendingPayments():[],ignored=access?ignoredPayments():[],sig=`${access}|${items.map(x=>x.id).join(",")}|${ignored.map(x=>x.id).join(",")}|${state.expenseCategories.length}`;
   if(!force&&sig===state.autoPaySig)return;state.autoPaySig=sig;
   if(!access){panel.hidden=false;panel.innerHTML='<div class="section-heading"><h2>결제 알림 자동 인식</h2></div><p class="help-text">은행·카드·페이 앱의 결제 알림을 모아두면, 검토해서 가계부에 저장하거나 무시할 수 있어요.</p><button type="button" class="secondary-button" id="autoPayEnable">알림 접근 허용하러 가기</button>';$("#autoPayEnable").onclick=()=>AndroidBridge.openPaymentAccessSettings();return}
-  if(!items.length){panel.hidden=true;panel.innerHTML="";return}
-  panel.hidden=false;panel.innerHTML=`<div class="section-heading"><h2>자동으로 찾은 지출 ${items.length}건</h2><button type="button" class="text-button" id="autoPayDismissAll">모두 무시</button></div><div class="auto-pay-list"></div>`;
+  if(!items.length&&!ignored.length){panel.hidden=true;panel.innerHTML="";return}
+  panel.hidden=false;panel.innerHTML=`<div class="section-heading"><h2>자동으로 찾은 지출 ${items.length}건</h2>${items.length?'<button type="button" class="text-button" id="autoPayDismissAll">모두 무시</button>':""}</div><div class="auto-pay-list"></div>`;
+  if(ignored.length){const box=document.createElement("details");box.className="auto-pay-ignored";box.open=!!state.autoPayIgnoredOpen;box.ontoggle=()=>state.autoPayIgnoredOpen=box.open;box.innerHTML=`<summary>인식 못 한 결제 알림 ${ignored.length}건</summary><p class="help-text">결제인데 지출로 못 잡은 알림이 있으면 [지출로 추가]를 누르세요. 자주 놓치면 아래에서 이 앱을 절전에서 빼주세요.</p><div class="auto-pay-ignored-list"></div><div class="auto-pay-ignored-actions"><button type="button" class="secondary-button ap-battery">배터리 설정 열기</button><button type="button" class="secondary-button ap-clear">목록 비우기</button></div>`;const il=box.querySelector(".auto-pay-ignored-list");ignored.forEach(it=>{const d=new Date(it.time),row=document.createElement("div");row.className="auto-pay-ignored-row";row.innerHTML='<div><div class="auto-pay-source"></div><div class="auto-pay-raw"></div></div><button type="button" class="small-button">지출로 추가</button>';row.querySelector(".auto-pay-source").textContent=`${it.app} · ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")} · ${it.reason||""}`;row.querySelector(".auto-pay-raw").textContent=it.text;row.querySelector("button").onclick=()=>{AndroidBridge.restoreIgnoredPayment(it.id);renderAutoPay(true)};il.append(row)});box.querySelector(".ap-battery").onclick=()=>AndroidBridge.openBatterySettings();box.querySelector(".ap-clear").onclick=()=>{if(!confirm("인식 못 한 알림 목록을 비울까요?"))return;AndroidBridge.clearIgnoredPayments();renderAutoPay(true)};panel.append(box)}
   const list=panel.querySelector(".auto-pay-list"),cats=state.expenseCategories.length?state.expenseCategories:[{name:"미분류"}];
   items.forEach(it=>{const d=new Date(it.time),row=document.createElement("div");row.className="auto-pay-item";
     row.innerHTML='<div class="auto-pay-source"></div><div class="auto-pay-raw"></div><div class="auto-pay-fields"><input class="ap-content" placeholder="사용처"><input class="ap-amount" type="number" inputmode="numeric" placeholder="금액"><select class="ap-cat"></select><input class="ap-date" type="date"></div><div class="auto-pay-actions"><button type="button" class="secondary-button ap-skip">무시</button><button type="button" class="primary-button ap-save">저장</button></div>';
     row.querySelector(".auto-pay-source").textContent=`${it.app} · ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-    row.querySelector(".auto-pay-raw").textContent=it.text;row.querySelector(".ap-content").value=it.merchant||"";row.querySelector(".ap-amount").value=it.amount;row.querySelector(".ap-date").value=iso(d);
+    row.querySelector(".auto-pay-raw").textContent=it.text;row.querySelector(".ap-content").value=it.merchant||"";row.querySelector(".ap-amount").value=it.amount||"";row.querySelector(".ap-date").value=iso(d);
     const sel=row.querySelector(".ap-cat");cats.forEach(c=>sel.add(new Option(c.name,c.name)));sel.value=guessExpenseCategory(`${it.merchant} ${it.text}`);
     row.querySelector(".ap-skip").onclick=()=>{AndroidBridge.removePendingPayments(JSON.stringify([it.id]));renderAutoPay(true)};
     row.querySelector(".ap-save").onclick=async e=>{const content=row.querySelector(".ap-content").value.trim(),amount=Number(row.querySelector(".ap-amount").value);if(!content)return toast("사용처를 입력하세요.");if(!amount||amount<=0)return toast("금액을 확인하세요.");e.target.disabled=true;const {error}=await sb.from("couple_items").insert({content,category:"가계부",writer:currentName(),completed:false,event_date:row.querySelector(".ap-date").value||iso(),amount,expense_group:sel.value||"미분류"});if(error){e.target.disabled=false;return toast("저장하지 못했습니다.")}AndroidBridge.removePendingPayments(JSON.stringify([it.id]));toast("가계부에 저장했습니다.");renderAutoPay(true);await loadAll()};
     list.append(row)});
-  $("#autoPayDismissAll").onclick=()=>{if(!confirm(`${items.length}건을 모두 무시할까요?`))return;AndroidBridge.removePendingPayments(JSON.stringify(items.map(x=>x.id)));renderAutoPay(true)};
+  if(items.length)$("#autoPayDismissAll").onclick=()=>{if(!confirm(`${items.length}건을 모두 무시할까요?`))return;AndroidBridge.removePendingPayments(JSON.stringify(items.map(x=>x.id)));renderAutoPay(true)};
 }
 function checkPendingPayments(){if(!payBridge()||els.app.hidden)return;const before=state.autoPaySig;renderAutoPay(false);const n=AndroidBridge.hasPaymentAccess()?pendingPayments().length:0;if(n&&state.autoPaySig!==before&&!$("#moneyView").classList.contains("active"))toast(`결제 알림 ${n}건이 검토를 기다려요. 가계부에서 확인하세요.`)}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkPendingPayments()});setInterval(checkPendingPayments,30000);
