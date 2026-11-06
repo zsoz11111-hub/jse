@@ -389,3 +389,10 @@ main,.view,.schedule-view-toolbar,#scheduleCalendarSection{min-width:0;max-width
 .parking-history-row .meta{margin-top:2px}
 .parking-dialog-cars{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .parking-dialog-cars .primary-button{margin:0}
+/* V29 인식 못 한 결제 알림 */
+.auto-pay-ignored{margin-top:12px;border-top:1px dashed #ead4d8;padding-top:10px}
+.auto-pay-ignored summary{cursor:pointer;font-size:13px;font-weight:800;color:#94606a}
+.auto-pay-ignored-list{display:grid;gap:8px;margin-top:8px}
+.auto-pay-ignored-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px;border:1px solid #eee1e3;border-radius:12px;background:#fff}
+.auto-pay-ignored-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.auto-pay-ignored-actions button{margin:0;min-height:40px}
