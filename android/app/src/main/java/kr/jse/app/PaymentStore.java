@@ -25,7 +25,14 @@ final class PaymentStore {
     /** 지출로 볼 만한 단어 */
     private static final Pattern SPEND = Pattern.compile("결제|승인|출금|이체|송금|지출|사용|체크카드|일시불|할부|자동납부");
     /** 지출이 아닌 알림 (취소·입금·환불·적립·충전 등) */
-    private static final Pattern NOT_SPEND = Pattern.compile("취소|입금|환불|충전|받았|받기|들어왔|\\(광고\\)|\\[광고\\]|대출|명세서|청구서|결제 예정|결제예정");
+    private static final Pattern NOT_SPEND = Pattern.compile("취소|입금|환불|받았|받기|들어왔|\\(광고\\)|\\[광고\\]|대출|명세서|청구서|결제 예정|결제예정");
+    /** "충전"은 단독이면 지출이 아니지만, "충전 후 결제"처럼 결제와 같이 오면 지출입니다. */
+    private static final Pattern CHARGE_ONLY = Pattern.compile("충전");
+    private static final Pattern PAID = Pattern.compile("결제|승인|사용");
+    private static final String IGNORED_KEY = "ignored";
+    private static final String SEEN_KEY = "seen";
+    private static final int MAX_IGNORED = 30;
+    private static final int MAX_SEEN = 300;
     private static final Pattern AMOUNT = Pattern.compile("([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)\\s*원");
     private static final Pattern NOT_AMOUNT_BEFORE = Pattern.compile("(잔액|누적|한도|포인트|적립|잔고|남은)\\s*[:：]?\\s*$");
     /** 사용처가 아닌 부분: [Web발신], 괄호, 금액, 날짜, 시간, 마스킹된 이름·번호, 잔액·누적 표시 */
@@ -48,21 +55,36 @@ final class PaymentStore {
     private PaymentStore() {
     }
 
-    /** 결제 알림이면 검토 대기 목록에 추가합니다. */
+    /**
+     * 결제 알림이면 검토 대기 목록에 추가합니다.
+     * 금융 앱 알림인데 지출로 보지 않은 것은 "인식 못 한 알림"에 남겨, 앱에서 직접 지출로 옮길 수 있게 합니다.
+     */
     static synchronized void handle(Context ctx, String appLabel, String title, String text, long postTime) {
         String full = ((title == null ? "" : title) + " " + (text == null ? "" : text)).replaceAll("\\s+", " ").trim();
-        if (full.isEmpty() || !SPEND.matcher(full).find() || NOT_SPEND.matcher(full).find()) return;
+        if (full.isEmpty()) return;
+        String id = Integer.toHexString((appLabel + "|" + full).hashCode()) + "-" + (postTime / 60000);
+        if (seen(ctx, id)) return; // 같은 알림이 다시 갱신되거나, 이미 저장·무시한 알림
+        String reason = null;
         long amount = findAmount(full);
-        if (amount <= 0) return;
+        if (!SPEND.matcher(full).find()) reason = "지출 단어 없음";
+        else if (NOT_SPEND.matcher(full).find() || (CHARGE_ONLY.matcher(full).find() && !PAID.matcher(full).find())) reason = "입금·취소·충전 알림";
+        else if (amount <= 0) reason = "금액 없음";
+        if (reason != null) {
+            if (amount > 0 || SPEND.matcher(full).find()) logIgnored(ctx, id, appLabel, full, amount, title, postTime, reason);
+            return;
+        }
 
         try {
             JSONArray list = load(ctx);
-            String id = Integer.toHexString((appLabel + "|" + full).hashCode()) + "-" + (postTime / 60000);
             for (int i = 0; i < list.length(); i++) {
                 JSONObject o = list.getJSONObject(i);
-                if (o.getString("id").equals(id)) return; // 같은 알림이 다시 갱신된 경우
-                if (o.getLong("amount") == amount && Math.abs(o.getLong("time") - postTime) < DUPLICATE_WINDOW_MS) return; // 카드·은행 중복
+                if (o.getLong("amount") == amount && Math.abs(o.getLong("time") - postTime) < DUPLICATE_WINDOW_MS) {
+                    // 카드·은행 중복으로 보이지만 혹시 몰라 "인식 못 한 알림"에 남깁니다.
+                    logIgnored(ctx, id, appLabel, full, amount, title, postTime, "같은 금액이 5분 안에 이미 있음");
+                    return;
+                }
             }
+            markSeen(ctx, id);
             JSONObject o = new JSONObject();
             o.put("id", id);
             o.put("app", appLabel);
@@ -106,6 +128,76 @@ final class PaymentStore {
 
     static synchronized String pendingJson(Context ctx) {
         return load(ctx).toString();
+    }
+
+    private static void logIgnored(Context ctx, String id, String appLabel, String full, long amount, String title, long postTime, String reason) {
+        try {
+            JSONArray list = loadKey(ctx, IGNORED_KEY);
+            for (int i = 0; i < list.length(); i++) if (list.getJSONObject(i).getString("id").equals(id)) return;
+            JSONObject o = new JSONObject();
+            o.put("id", id);
+            o.put("app", appLabel);
+            o.put("text", full.length() > 160 ? full.substring(0, 160) + "…" : full);
+            o.put("amount", amount);
+            o.put("merchant", guessMerchant(full, title, appLabel));
+            o.put("time", postTime);
+            o.put("reason", reason);
+            list.put(o);
+            while (list.length() > MAX_IGNORED) list.remove(0);
+            saveKey(ctx, IGNORED_KEY, list);
+        } catch (Exception ignored) {
+        }
+    }
+
+    static synchronized String ignoredJson(Context ctx) {
+        return loadKey(ctx, IGNORED_KEY).toString();
+    }
+
+    /** "인식 못 한 알림"을 검토 대기 목록으로 옮깁니다 (금액이 없으면 0으로 두고 앱에서 입력). */
+    static synchronized void restoreIgnored(Context ctx, String id) {
+        try {
+            JSONArray ignored = loadKey(ctx, IGNORED_KEY), keep = new JSONArray(), pending = load(ctx);
+            for (int i = 0; i < ignored.length(); i++) {
+                JSONObject o = ignored.getJSONObject(i);
+                if (o.getString("id").equals(id)) {
+                    o.remove("reason");
+                    pending.put(o);
+                    markSeen(ctx, id);
+                } else keep.put(o);
+            }
+            saveKey(ctx, IGNORED_KEY, keep);
+            save(ctx, pending);
+        } catch (Exception ignored) {
+        }
+    }
+
+    static synchronized void clearIgnored(Context ctx) {
+        saveKey(ctx, IGNORED_KEY, new JSONArray());
+    }
+
+    private static boolean seen(Context ctx, String id) {
+        JSONArray s = loadKey(ctx, SEEN_KEY);
+        for (int i = 0; i < s.length(); i++) if (id.equals(s.optString(i))) return true;
+        return false;
+    }
+
+    private static void markSeen(Context ctx, String id) {
+        JSONArray s = loadKey(ctx, SEEN_KEY);
+        s.put(id);
+        while (s.length() > MAX_SEEN) s.remove(0);
+        saveKey(ctx, SEEN_KEY, s);
+    }
+
+    private static JSONArray loadKey(Context ctx, String key) {
+        try {
+            return new JSONArray(prefs(ctx).getString(key, "[]"));
+        } catch (Exception e) {
+            return new JSONArray();
+        }
+    }
+
+    private static void saveKey(Context ctx, String key, JSONArray list) {
+        prefs(ctx).edit().putString(key, list.toString()).apply();
     }
 
     static synchronized void remove(Context ctx, String idsJson) {
