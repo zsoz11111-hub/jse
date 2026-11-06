@@ -95,6 +95,18 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // 알림 읽기 연결이 끊겨 있으면(업데이트 직후, 절전 등) 앱을 열 때마다 다시 연결합니다.
+        try {
+            NotificationManager nm = getSystemService(NotificationManager.class);
+            ComponentName c = new ComponentName(this, PaymentListener.class);
+            if (nm != null && nm.isNotificationListenerAccessGranted(c)) android.service.notification.NotificationListenerService.requestRebind(c);
+        } catch (Exception ignored) {
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         web.saveState(outState);
@@ -161,6 +173,35 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String getPendingPayments() {
             return PaymentStore.pendingJson(MainActivity.this);
+        }
+
+        /** 금융 앱 알림이지만 지출로 보지 않은 최근 알림(JSON) */
+        @JavascriptInterface
+        public String getIgnoredPayments() {
+            return PaymentStore.ignoredJson(MainActivity.this);
+        }
+
+        /** 인식 못 한 알림을 검토 대기 목록으로 옮깁니다. */
+        @JavascriptInterface
+        public void restoreIgnoredPayment(String id) {
+            PaymentStore.restoreIgnored(MainActivity.this, id);
+        }
+
+        @JavascriptInterface
+        public void clearIgnoredPayments() {
+            PaymentStore.clearIgnored(MainActivity.this);
+        }
+
+        /** 배터리 사용 설정(앱 정보) 화면을 엽니다. 절전에서 빼야 알림을 놓치지 않습니다. */
+        @JavascriptInterface
+        public void openBatterySettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "설정 화면을 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         /** 저장했거나 무시한 항목을 검토 대기 목록에서 지웁니다. */
