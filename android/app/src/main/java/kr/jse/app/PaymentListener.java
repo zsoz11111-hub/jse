@@ -1,14 +1,18 @@
 package kr.jse.app;
 
 import android.app.Notification;
+import android.content.ComponentName;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -43,14 +47,39 @@ public class PaymentListener extends NotificationListenerService {
             String title = str(e.getCharSequence(Notification.EXTRA_TITLE));
             CharSequence big = e.getCharSequence(Notification.EXTRA_BIG_TEXT);
             String text = str(big != null ? big : e.getCharSequence(Notification.EXTRA_TEXT));
+            String sub = str(e.getCharSequence(Notification.EXTRA_SUB_TEXT));
+            // 여러 줄 알림(InboxStyle)은 본문이 줄 목록에만 들어 있는 경우가 있습니다.
+            CharSequence[] lines = e.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
+            if (lines != null && lines.length > 0) {
+                StringBuilder sb = new StringBuilder();
+                for (CharSequence l : lines) sb.append(l).append(' ');
+                text = text + " " + sb;
+            }
             String label = appLabel(pkg);
+            // 문자·카톡(MessagingStyle)은 메시지가 여러 개 묶여 오므로 하나씩 따로 봅니다. 본문에는 "새 메시지 3개"처럼만 오기도 합니다.
+            List<String> messages = new ArrayList<>();
+            Parcelable[] msgs = e.getParcelableArray(Notification.EXTRA_MESSAGES);
+            if (msgs != null) for (Parcelable p : msgs) if (p instanceof Bundle) {
+                String t = str(((Bundle) p).getCharSequence("text"));
+                if (!t.isEmpty()) messages.add(t);
+            }
 
+            String all = title + " " + text + " " + sub + " " + String.join(" ", messages);
             boolean finance = FINANCE_APPS.contains(pkg) || FINANCE_PACKAGE.matcher(pkg).find() || FINANCE_WORDS.matcher(label).find();
-            boolean message = MESSAGE_APPS.contains(pkg) && FINANCE_WORDS.matcher(title + " " + text).find();
+            boolean message = MESSAGE_APPS.contains(pkg) && FINANCE_WORDS.matcher(all).find();
             if (!finance && !message) return;
-            PaymentStore.handle(this, message && !title.isEmpty() ? title : label, title, text, sbn.getPostTime());
+            String source = message && !title.isEmpty() ? title : label;
+            if (messages.isEmpty()) PaymentStore.handle(this, source, title, (text + " " + sub).trim(), sbn.getPostTime());
+            else for (String m : messages) PaymentStore.handle(this, source, title, m, sbn.getPostTime());
         } catch (Exception ignored) {
         }
+    }
+
+    @Override
+    public void onListenerDisconnected() {
+        super.onListenerDisconnected();
+        // 삼성 절전 등으로 연결이 끊기면 다시 연결을 요청합니다.
+        requestRebind(new ComponentName(this, PaymentListener.class));
     }
 
     private String appLabel(String pkg) {
