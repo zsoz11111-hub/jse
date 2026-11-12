@@ -8,7 +8,11 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -18,6 +22,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,20 +49,31 @@ public class ParkingTagActivity extends Activity {
         String floor = u == null ? null : u.getQueryParameter("parking");
         String car = u == null ? null : u.getQueryParameter("car");
         String key = u == null ? null : u.getQueryParameter("k");
-        if (u == null || floor == null) {
+        if (u == null) {
+            // 텍스트 스티커 (예: "주차 니로 B3 비밀값"): 아이폰에서는 사파리 알림이 뜨지 않습니다.
+            String[] t = parseText(readText());
+            if (t == null) {
+                finish();
+                return;
+            }
+            car = t[0];
+            floor = t[1];
+            key = t[2];
+        } else if (floor == null) {
             finish();
             return;
         }
-        if (key == null || car == null || !FLOORS.containsKey(floor)) {
+        if (u != null && (key == null || car == null || !FLOORS.containsKey(floor))) {
             // 예전 스티커: 앱을 열어서 저장
             startActivity(new Intent(Intent.ACTION_VIEW, u, this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             finish();
             return;
         }
+        final String fCar = car, fFloor = floor, fKey = key;
         new Thread(() -> {
-            String result = save(car, floor, key);
-            if (result == null) result = save(car, floor, key); // 한 번 더 시도
-            String where = car + "가 " + FLOORS.get(floor) + "에 주차되었어요.";
+            String result = save(fCar, fFloor, fKey);
+            if (result == null) result = save(fCar, fFloor, fKey); // 한 번 더 시도
+            String where = fCar + "가 " + FLOORS.get(fFloor) + "에 주차되었어요.";
             String msg;
             if ("ok".equals(result)) msg = where;
             else if ("dup".equals(result)) msg = where + " (방금 저장됨)";
@@ -68,6 +84,40 @@ public class ParkingTagActivity extends Activity {
                 finish();
             });
         }).start();
+    }
+
+    /** NFC 텍스트 레코드의 글자를 읽습니다. */
+    private String readText() {
+        try {
+            Parcelable[] raw = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            if (raw == null) return null;
+            StringBuilder sb = new StringBuilder();
+            for (Parcelable p : raw) {
+                for (NdefRecord r : ((NdefMessage) p).getRecords()) {
+                    if (r.getTnf() != NdefRecord.TNF_WELL_KNOWN || !Arrays.equals(r.getType(), NdefRecord.RTD_TEXT)) continue;
+                    byte[] pl = r.getPayload();
+                    if (pl.length == 0) continue;
+                    int langLen = pl[0] & 0x3F;
+                    java.nio.charset.Charset cs = (pl[0] & 0x80) != 0 ? StandardCharsets.UTF_16 : StandardCharsets.UTF_8;
+                    sb.append(new String(pl, 1 + langLen, pl.length - 1 - langLen, cs)).append(' ');
+                }
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** "주차 니로 B3 비밀값"처럼 띄어쓰기로 구분된 글자에서 차, 층, 비밀 값을 찾습니다. 순서는 상관없습니다. */
+    static String[] parseText(String text) {
+        if (text == null) return null;
+        String car = null, floor = null, key = null;
+        for (String t : text.trim().split("[\\s,|/]+")) {
+            if (t.equals("니로") || t.equals("제네시스")) car = t;
+            else if (t.matches("(?i)b?[345]")) floor = "B" + t.substring(t.length() - 1);
+            else if (t.matches("[a-z0-9]{10,}")) key = t;
+        }
+        return car == null || floor == null || key == null ? null : new String[]{car, floor, key};
     }
 
     private String save(String car, String floor, String key) {
