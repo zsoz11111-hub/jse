@@ -133,3 +133,26 @@ begin
 end $$;
 
 notify pgrst, 'reload schema';
+
+-- 5) 주차 스티커: 로그인 없이(아이폰 사파리 등) 주차 위치만 저장 -------------------
+-- 스티커 주소의 k 값과 private.app_secrets 의 'parking_tag' 값이 같을 때만 저장합니다.
+-- 비밀 값은 이 파일(공개 저장소)에 넣지 말고 SQL 편집기에서 따로 넣으세요:
+--   insert into private.app_secrets values('parking_tag','비밀값') on conflict(name) do update set value=excluded.value;
+create schema if not exists private;
+create table if not exists private.app_secrets(name text primary key, value text not null);
+revoke all on schema private from anon, authenticated;
+revoke all on all tables in schema private from anon, authenticated;
+
+create or replace function public.nfc_parking(p_car text, p_floor text, p_key text)
+returns text language plpgsql security definer set search_path = public as $$
+begin
+  if p_key is null or not exists(select 1 from private.app_secrets where name='parking_tag' and value=p_key) then return 'bad'; end if;
+  if p_car not in ('니로','제네시스') or p_floor not in ('B3','B4','B5') then return 'bad'; end if;
+  if exists(select 1 from public.parking_records where car=p_car and floor=p_floor and recorded_at > now() - interval '60 seconds') then return 'dup'; end if;
+  insert into public.parking_records(car, floor, source, writer) values(p_car, p_floor, 'NFC', '태그');
+  return 'ok';
+end $$;
+revoke all on function public.nfc_parking(text,text,text) from public;
+grant execute on function public.nfc_parking(text,text,text) to anon, authenticated;
+
+notify pgrst, 'reload schema';
