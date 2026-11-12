@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
     static final String SUPABASE_HOST = "qrcfwedbmlsrhgmgwqya.supabase.co";
 
     static final int CALENDAR_PERMISSION_REQUEST = 1;
+    static final int NOTIFY_PERMISSION_REQUEST = 2;
 
     private WebView web;
     private String pendingCalendarJson;
@@ -61,6 +62,13 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
+
+        // 주차 스티커 알림을 띄우려면 알림 권한이 필요합니다 (안드로이드 13 이상, 처음 한 번만 물어봄)
+        if (android.os.Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                && !getSharedPreferences("app", MODE_PRIVATE).getBoolean("asked_notify", false)) {
+            getSharedPreferences("app", MODE_PRIVATE).edit().putBoolean("asked_notify", true).apply();
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFY_PERMISSION_REQUEST);
+        }
 
         String parking = parkingUrl(getIntent());
         if (parking != null) web.loadUrl(parking);
