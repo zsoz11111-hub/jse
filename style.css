@@ -416,3 +416,7 @@ html[data-theme="white"] body{background:#fff}
 .nav-order-name{font-weight:700}
 .nav-order-btn{height:36px;border:1px solid #eadbdd;border-radius:10px;background:#faf5f6;color:#80555d;font-size:14px}
 .nav-order-btn:disabled{opacity:.3}
+/* V31 로그인 없이 주차 스티커 기록 */
+.tag-screen .profile-card{text-align:center}
+.tag-screen #tagText{white-space:pre-line;font-size:17px;color:#5d5154}
+.tag-screen.fail h1{color:#b4474f}
