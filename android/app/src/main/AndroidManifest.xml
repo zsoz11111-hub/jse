@@ -53,6 +53,12 @@
                     android:pathPrefix="/jse/"
                     android:scheme="https" />
             </intent-filter>
+            <!-- 글자(텍스트)만 들어 있는 주차 스티커 -->
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
 
         <!-- 홈 화면에 따로 생기는 "지출 입력" 아이콘 -->
